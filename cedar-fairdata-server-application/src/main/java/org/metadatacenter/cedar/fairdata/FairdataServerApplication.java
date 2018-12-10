@@ -28,6 +28,8 @@ public class FairdataServerApplication extends CedarMicroserviceApplicationWithM
 
   @Override
   public void initializeApp() {
+    CedarDataServices.initializeWorkspaceServices(cedarConfig);
+
     MongoConfig templateServerConfig = cedarConfig.getTemplateServerConfig();
     CedarDataServices.initializeMongoClientFactoryForDocuments(templateServerConfig.getMongoConnection());
 
