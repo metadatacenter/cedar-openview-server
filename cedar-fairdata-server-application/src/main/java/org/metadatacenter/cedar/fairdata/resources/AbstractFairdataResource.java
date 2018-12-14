@@ -19,14 +19,14 @@ public abstract class AbstractFairdataResource extends CedarMicroserviceResource
   }
 
   protected Response lookupId(String id) throws CedarException {
-    CedarRequestContext c = buildRequestContext();
+    CedarRequestContext c = buildAnonymousRequestContext();
 
     FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
 
     FolderServerResource folderServerResource = folderSession.findResourceById(id);
     if (folderServerResource == null) {
       return CedarResponse.notFound().id(id).build();
-    } else if (folderServerResource.isPublic()) {
+    } else if (folderServerResource.isPublic() != null && folderServerResource.isPublic()) {
       return Response.ok().build();
     } else {
       return CedarResponse.unauthorized()
