@@ -3,7 +3,6 @@ package org.metadatacenter.cedar.fairdata.resources;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
 import org.metadatacenter.config.CedarConfig;
-import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
 import org.metadatacenter.model.folderserver.basic.FolderServerResource;
 import org.metadatacenter.rest.context.CedarRequestContext;
@@ -24,16 +23,11 @@ public abstract class AbstractFairdataResource extends CedarMicroserviceResource
     FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
 
     FolderServerResource folderServerResource = folderSession.findResourceById(id);
-    if (folderServerResource == null) {
-      return CedarResponse.notFound().id(id).build();
-    } else if (folderServerResource.isPublic() != null && folderServerResource.isPublic()) {
+    if (folderServerResource != null && folderServerResource.isOpen() != null && folderServerResource.isOpen()) {
       return Response.ok().build();
     } else {
-      return CedarResponse.unauthorized()
-          .errorKey(CedarErrorKey.RESOURCE_NOT_PUBLIC)
-          .errorMessage("The requested resource is not publicly available!").build();
+      return CedarResponse.notFound().id(id).build();
     }
   }
-
 
 }
