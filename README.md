@@ -1,8 +1,8 @@
-# cedar-fairdata-server
+# cedar-open-server
 
-[![Build Status](https://travis-ci.org/metadatacenter/cedar-fairdata-server.svg?branch=master)](https://travis-ci.org/metadatacenter/cedar-fairdata-server)
+[![Build Status](https://travis-ci.org/metadatacenter/cedar-open-server.svg?branch=master)](https://travis-ci.org/metadatacenter/cedar-open-server)
 
-CEDAR server to present publicly available data
+CEDAR server to present open metadata
 
 To access the documentation, [click here](https://github.com/metadatacenter/cedar-docs/wiki).
 
