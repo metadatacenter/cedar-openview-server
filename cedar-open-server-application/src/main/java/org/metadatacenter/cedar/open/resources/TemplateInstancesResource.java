@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
+import org.metadatacenter.model.CedarNodeType;
 import org.metadatacenter.server.service.TemplateInstanceService;
 import org.metadatacenter.util.http.CedarResponse;
 import org.metadatacenter.util.mongo.MongoUtils;
@@ -15,7 +16,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import java.io.IOException;
 
 import static org.metadatacenter.constant.CedarPathParameters.PP_ID;
@@ -36,30 +36,30 @@ public class TemplateInstancesResource extends AbstractOpenResource {
   @Timed
   @Path("/{id}")
   public Response findTemplateElement(@PathParam(PP_ID) String id) throws CedarException {
-    Response response = lookupId(id);
+    Response response = lookupId(id, CedarNodeType.INSTANCE);
     if (response.getStatus() != Response.Status.OK.getStatusCode()) {
       return response;
     } else {
-      JsonNode template;
+      JsonNode templateInstance;
       try {
-        template = templateInstanceService.findTemplateInstance(id);
+        templateInstance = templateInstanceService.findTemplateInstance(id);
       } catch (IOException e) {
         return CedarResponse.internalServerError()
             .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_NOT_FOUND)
-            .errorMessage("The template can not be found by id:" + id)
+            .errorKey(CedarErrorKey.TEMPLATE_INSTANCE_NOT_FOUND)
+            .errorMessage("The template instance can not be found by id:" + id)
             .exception(e)
             .build();
       }
-      if (template == null) {
+      if (templateInstance == null) {
         return CedarResponse.notFound()
             .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_NOT_FOUND)
-            .errorMessage("The template can not be found by id:" + id)
+            .errorKey(CedarErrorKey.TEMPLATE_INSTANCE_NOT_FOUND)
+            .errorMessage("The template instance can not be found by id:" + id)
             .build();
       } else {
-        MongoUtils.removeIdField(template);
-        return Response.ok().entity(template).build();
+        MongoUtils.removeIdField(templateInstance);
+        return Response.ok().entity(templateInstance).build();
       }
     }
 

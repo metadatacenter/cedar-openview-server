@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
+import org.metadatacenter.model.CedarNodeType;
 import org.metadatacenter.server.service.TemplateFieldService;
 import org.metadatacenter.util.http.CedarResponse;
 import org.metadatacenter.util.mongo.MongoUtils;
@@ -28,37 +29,37 @@ public class TemplateFieldsResource extends AbstractOpenResource {
 
   public TemplateFieldsResource(CedarConfig cedarConfig, TemplateFieldService<String, JsonNode> templateFieldService) {
     super(cedarConfig);
-    TemplateFieldsResource.templateFieldService = templateFieldService;
+    this.templateFieldService = templateFieldService;
   }
 
   @GET
   @Timed
   @Path("/{id}")
   public Response findTemplateField(@PathParam(PP_ID) String id) throws CedarException {
-    Response response = lookupId(id);
+    Response response = lookupId(id, CedarNodeType.FIELD);
     if (response.getStatus() != Response.Status.OK.getStatusCode()) {
       return response;
     } else {
-      JsonNode template;
+      JsonNode templateField;
       try {
-        template = templateFieldService.findTemplateField(id);
+        templateField = templateFieldService.findTemplateField(id);
       } catch (IOException e) {
         return CedarResponse.internalServerError()
             .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_NOT_FOUND)
-            .errorMessage("The template can not be found by id:" + id)
+            .errorKey(CedarErrorKey.TEMPLATE_FIELD_NOT_FOUND)
+            .errorMessage("The template field can not be found by id:" + id)
             .exception(e)
             .build();
       }
-      if (template == null) {
+      if (templateField == null) {
         return CedarResponse.notFound()
             .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_NOT_FOUND)
-            .errorMessage("The template can not be found by id:" + id)
+            .errorKey(CedarErrorKey.TEMPLATE_FIELD_NOT_FOUND)
+            .errorMessage("The template field can not be found by id:" + id)
             .build();
       } else {
-        MongoUtils.removeIdField(template);
-        return Response.ok().entity(template).build();
+        MongoUtils.removeIdField(templateField);
+        return Response.ok().entity(templateField).build();
       }
     }
   }

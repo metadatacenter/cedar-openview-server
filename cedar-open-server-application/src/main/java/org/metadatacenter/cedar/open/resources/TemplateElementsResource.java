@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
+import org.metadatacenter.model.CedarNodeType;
 import org.metadatacenter.server.service.TemplateElementService;
 import org.metadatacenter.util.http.CedarResponse;
 import org.metadatacenter.util.mongo.MongoUtils;
@@ -28,37 +29,37 @@ public class TemplateElementsResource extends AbstractOpenResource {
   public TemplateElementsResource(CedarConfig cedarConfig, TemplateElementService<String, JsonNode>
       templateElementService) {
     super(cedarConfig);
-    TemplateElementsResource.templateElementService = templateElementService;
+    this.templateElementService = templateElementService;
   }
 
   @GET
   @Timed
   @Path("/{id}")
   public Response findTemplateElement(@PathParam(PP_ID) String id) throws CedarException {
-    Response response = lookupId(id);
+    Response response = lookupId(id, CedarNodeType.ELEMENT);
     if (response.getStatus() != Response.Status.OK.getStatusCode()) {
       return response;
     } else {
-      JsonNode template;
+      JsonNode templateElement;
       try {
-        template = templateElementService.findTemplateElement(id);
+        templateElement = templateElementService.findTemplateElement(id);
       } catch (IOException e) {
         return CedarResponse.internalServerError()
             .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_NOT_FOUND)
-            .errorMessage("The template can not be found by id:" + id)
+            .errorKey(CedarErrorKey.TEMPLATE_ELEMENT_NOT_FOUND)
+            .errorMessage("The template element can not be found by id:" + id)
             .exception(e)
             .build();
       }
-      if (template == null) {
+      if (templateElement == null) {
         return CedarResponse.notFound()
             .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_NOT_FOUND)
-            .errorMessage("The template can not be found by id:" + id)
+            .errorKey(CedarErrorKey.TEMPLATE_ELEMENT_NOT_FOUND)
+            .errorMessage("The template element can not be found by id:" + id)
             .build();
       } else {
-        MongoUtils.removeIdField(template);
-        return Response.ok().entity(template).build();
+        MongoUtils.removeIdField(templateElement);
+        return Response.ok().entity(templateElement).build();
       }
     }
   }
