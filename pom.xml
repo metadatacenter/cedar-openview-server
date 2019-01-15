@@ -22,12 +22,22 @@
     <connection>scm:git:git@github.com:metadatacenter/cedar-open-server.git</connection>
     <developerConnection>scm:git:git@github.com:metadatacenter/cedar-open-server.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-open-server</url>
-    <tag>release-2.1.6</tag>
   </scm>
 
   <modules>
     <module>cedar-open-server-core</module>
     <module>cedar-open-server-application</module>
   </modules>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>
