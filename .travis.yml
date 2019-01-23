@@ -1,0 +1,33 @@
+sudo: required
+dist: trusty
+language: java
+jdk:
+- openjdk10
+branches:
+  only:
+  - develop
+  - master
+notifications:
+  slack:
+    on_success: change
+    on_failure: always
+    secure: QFjS+JnHIoDnckrYOXG3QJ6YO03ciZFWk4hrPuLj4/jvz0eTisw81pOPVTu7TpgNOg/iysNCYoPf46Zf+briDEUJR5nJ5+6FUKMB98LjPJewl+2hfQH6pCuU15TF/OuBZ2n8a82TQRM8EFXzomH+oH/ZztTd/JnMdpQpIUcHVqc3ccjMQ/MO7AXF92qi8T3soI/ycX2adBxzSBm171Zt0vjo7DbNy5ScrkVnnF/pTNVgwrcgeXHSoemBeyZxU1j41ZHuREATwCJ7bbtXfLJByGPKfOHBn2+Vg+uiYAofgmz/xgAG+wnxgnTPZxX9K9kz6yi40uHOSHlQPjrJToxsE2NmAEM6jj7QkuYp8fg23tqSot36RHDCQ2yZ4LXgZQbFa82UxeKgjDdkQLmQFwy57bXvG51CKt/QQPHAeTv2PHqJzaOiA1/QPr3srIx0Emnbz+vutt89lC52SDeW41bQqQqgsN6rfwio3gQ9D4F395cbB2byRr0p8jxYzfOiNQMFcdFskedvWez0FTCp7pdVVfEpf02XGTQGyfST3L4PIHC2obRY51k0LEPyZ5ad0lBLtfJFdVyTiNoJHPrW5GuEyWDH26v+idE94Noy+WhTzymTivLFuqhWMBAqfASffARbEmf1edmBtAI4QGaktV2PDgPTE2AjvdDbTXDOn0KWM1I=
+install: '[ ${TRAVIS_PULL_REQUEST} = ''false'' ] && mvn -DskipTests=false clean deploy
+  --settings .m2/travis-settings.xml'
+script: '[ ${TRAVIS_PULL_REQUEST} = ''false'' ] && mvn -DskipTests=true clean --settings
+  .m2/travis-settings.xml'
+env:
+  global:
+  - CEDAR_HOST=metadatacenter.orgx
+  - CEDAR_NEO4J_TRANSACTION_URL=http://localhost
+  - CEDAR_NEO4J_AUTH_STRING='Basic base64'
+  - CEDAR_NEO4J_HOST=127.0.0.1
+  - CEDAR_NEO4J_REST_PORT='7474'
+  - CEDAR_NEO4J_BOLT_PORT='7687'
+  - CEDAR_MONGO_APP_USER_NAME=cedarUser
+  - CEDAR_MONGO_APP_USER_PASSWORD=password
+  - CEDAR_OPEN_HTTP_PORT=9013
+  - CEDAR_OPEN_ADMIN_PORT=9113
+  - CEDAR_OPEN_STOP_PORT=9213
+  - secure: VY75RBRihpTX2ShZ7X+oW5rt37FK2TB0dmIjrPy914dx4m30Bq+QSx5p9F65rfsWyta1KkBGC6af6/MUS0tELMqmZl2vgRVJANMCmcdafY9/3nOiY1w6kEDEjN0Nih2/PfPW82wq/asUKk7jiZT2qJjEvQT6ZAQMQCb20V4PBn1zrqxIw5WinYbrMX59gcW8H3paJhwkMDhLL2lAtAWNWLIKB934hIKrE2NcizPbLKsPvtIwWYnFJ9PsAU2UNQA5ZQnHh+7ZwnCdPM/xCkdWsnMkF0wrgSsrvOQwzaeOo1RPCwst04CHIrlpIPwb9XB/RfxOnmKB2MVBBhXJ4621ZEhxKNBA+09b6uVREBuYKjuwiSdH7eH5MtwSsLGeDe9OWnt3SLELnKAi/bVl80bM3LFl5m9wwY+MXBo5DJ5vlY911QCIqps+HwVOQhpTNbj8KFl/QAd8zQgcn5Ux1DjMUC38DCJP7hAGOf5R+K2jEoBXIxLeWY0urtiy8smaGGXjkqBttu6eJmQjnsePQJdr703I7K6bYcWiZOg2aBRXwCcJqCdMyKHAFK8JG86tLrPlZna1Vpl3kVp9T3BdvOs7vJ/P3kJkq3wWsBJJvyeCwNEY9UwjTz2DnUPIWMk0GT8eboO95kJ4beLR7TZSaWDKpVKjkjPGhnTe9bmZCayEPH4=
+  - secure: k03YX0wva4I0i1uaGon23j2icD7bjfq5U8prA6WQWvXQJXs4DOtojGIvavKvQd+lGnYaVubPAhvIrUYvFrAw3joxoLq5V7DGjY6T1GMmY/2SHBbebK6VuR4AojSLDPzZG2UmjBsow9LFZUjPeqjoBFO0lP0BYzaYc5MxDo6TI8Ye8daRUXMW78Nvy4Y1iJpu8HJKY8fskYedIpK7jnMAMqaEhPIaDF6MDLaO+6vTBg0j6Y68tNtqzCHcjSXl3UbWvH1V0eAWS3jLJ+ZQcUqpxr5m45sqBACjAHlCDc6Ug0s839s72JQpmgQF83Jjjn0PUiFUzmomRGJcnOMyDYW9EbVoCVNMWCeaZzVre7kvmiTvDi53vZgHozcGLTOZmiKRjqu2OdmXIM4Acv1f63JPkJi3tJMJctPTf1072e3pxDvI6NFpZAmxf+2ncljK8YdXkk/VXfALXQDz2TvzgVB8kwb5IkqlAK959IIYZ6tEaHLSZJAAphaMlkM/m6QhlHW9X8mwGRHknDIx2W1E3OxQl2/uqvu+xWSkWK/m0pKbyqy+zMxT67qx6QD+h5EUa8Z2g1eDl2Jz0ZuHTIp+KgDwEtunC0pV19a1FxqH5BcvHsS6P7oNpQKRVAm3IiPZv5WYThfDvp+KL5Pwu1ucJqexMlu9QiYwoXsVrM2een+NhCc=
