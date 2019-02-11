@@ -30,10 +30,14 @@ public abstract class AbstractOpenResource extends CedarMicroserviceResource {
       folderServerResource = folderSession.findResourceById(alternateId);
     }
 
-    if (folderServerResource != null && folderServerResource.isOpen() != null && folderServerResource.isOpen()) {
-      return Response.ok().build();
-    } else {
+    if (folderServerResource == null) {
       return CedarResponse.notFound().id(id).build();
+    } else {
+      if (folderServerResource.isOpen() != null && folderServerResource.isOpen()) {
+        return Response.ok().build();
+      } else {
+        return CedarResponse.unauthorized().id(id).build();
+      }
     }
   }
 
