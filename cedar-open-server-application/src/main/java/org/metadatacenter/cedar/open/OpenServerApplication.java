@@ -28,7 +28,7 @@ public class OpenServerApplication extends CedarMicroserviceApplicationWithMongo
 
   @Override
   public void initializeApp() {
-    CedarDataServices.initializeWorkspaceServices(cedarConfig);
+    CedarDataServices.initializeNeo4jServices(cedarConfig);
 
     MongoConfig templateServerConfig = cedarConfig.getTemplateServerConfig();
     CedarDataServices.initializeMongoClientFactoryForDocuments(templateServerConfig.getMongoConnection());
