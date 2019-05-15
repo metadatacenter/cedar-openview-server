@@ -23,11 +23,11 @@ public abstract class AbstractOpenResource extends CedarMicroserviceResource {
 
     FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
 
-    FolderServerArtifact folderServerResource = folderSession.findResourceById(id);
+    FolderServerArtifact folderServerResource = folderSession.findArtifactById(id);
 
     if (folderServerResource == null) {
       String alternateId = linkedDataUtil.getLinkedDataId(resourceType, id);
-      folderServerResource = folderSession.findResourceById(alternateId);
+      folderServerResource = folderSession.findArtifactById(alternateId);
     }
 
     if (folderServerResource == null) {
