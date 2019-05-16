@@ -4,8 +4,8 @@ import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.exception.CedarException;
-import org.metadatacenter.model.CedarNodeType;
-import org.metadatacenter.model.folderserver.basic.FolderServerResource;
+import org.metadatacenter.model.CedarResourceType;
+import org.metadatacenter.model.folderserver.basic.FolderServerArtifact;
 import org.metadatacenter.rest.context.CedarRequestContext;
 import org.metadatacenter.server.FolderServiceSession;
 import org.metadatacenter.util.http.CedarResponse;
@@ -18,16 +18,16 @@ public abstract class AbstractOpenResource extends CedarMicroserviceResource {
     super(cedarConfig);
   }
 
-  protected Response lookupId(String id, CedarNodeType nodeType) throws CedarException {
+  protected Response lookupId(String id, CedarResourceType resourceType) throws CedarException {
     CedarRequestContext c = buildAnonymousRequestContext();
 
     FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
 
-    FolderServerResource folderServerResource = folderSession.findResourceById(id);
+    FolderServerArtifact folderServerResource = folderSession.findArtifactById(id);
 
     if (folderServerResource == null) {
-      String alternateId = linkedDataUtil.getLinkedDataId(nodeType, id);
-      folderServerResource = folderSession.findResourceById(alternateId);
+      String alternateId = linkedDataUtil.getLinkedDataId(resourceType, id);
+      folderServerResource = folderSession.findArtifactById(alternateId);
     }
 
     if (folderServerResource == null) {
