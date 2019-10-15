@@ -3,7 +3,7 @@ package org.metadatacenter.cedar.open.resources;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
 import org.metadatacenter.config.CedarConfig;
-import org.metadatacenter.exception.CedarException;
+import org.metadatacenter.id.CedarArtifactId;
 import org.metadatacenter.model.CedarResourceType;
 import org.metadatacenter.model.folderserver.basic.FolderServerArtifact;
 import org.metadatacenter.rest.context.CedarRequestContext;
@@ -18,25 +18,26 @@ public abstract class AbstractOpenResource extends CedarMicroserviceResource {
     super(cedarConfig);
   }
 
-  protected Response lookupId(String id, CedarResourceType resourceType) throws CedarException {
+  protected Response lookupId(CedarArtifactId artifactId, CedarResourceType resourceType) {
     CedarRequestContext c = buildAnonymousRequestContext();
 
     FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
 
-    FolderServerArtifact folderServerResource = folderSession.findArtifactById(id);
+    FolderServerArtifact folderServerResource = folderSession.findArtifactById(artifactId);
 
     if (folderServerResource == null) {
-      String alternateId = linkedDataUtil.getLinkedDataId(resourceType, id);
-      folderServerResource = folderSession.findArtifactById(alternateId);
+      String alternateId = linkedDataUtil.getLinkedDataId(resourceType, artifactId.getId());
+      CedarArtifactId aid = CedarArtifactId.buildSafe(alternateId);
+      folderServerResource = folderSession.findArtifactById(aid);
     }
 
     if (folderServerResource == null) {
-      return CedarResponse.notFound().id(id).build();
+      return CedarResponse.notFound().id(artifactId).build();
     } else {
       if (folderServerResource.isOpen() != null && folderServerResource.isOpen()) {
         return Response.ok().build();
       } else {
-        return CedarResponse.unauthorized().id(id).build();
+        return CedarResponse.unauthorized().id(artifactId).build();
       }
     }
   }
