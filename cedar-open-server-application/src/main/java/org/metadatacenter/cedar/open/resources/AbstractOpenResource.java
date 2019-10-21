@@ -27,7 +27,7 @@ public abstract class AbstractOpenResource extends CedarMicroserviceResource {
 
     if (folderServerResource == null) {
       String alternateId = linkedDataUtil.getLinkedDataId(resourceType, artifactId.getId());
-      CedarArtifactId aid = CedarArtifactId.buildSafe(alternateId);
+      CedarArtifactId aid = CedarArtifactId.build(alternateId, resourceType);
       folderServerResource = folderSession.findArtifactById(aid);
     }
 
