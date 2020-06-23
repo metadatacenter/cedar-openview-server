@@ -9,24 +9,24 @@
   </parent>
 
   <groupId>org.metadatacenter</groupId>
-  <artifactId>cedar-open-server</artifactId>
+  <artifactId>cedar-openview-server</artifactId>
   <version>2.4.12-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>CEDAR Open Server</name>
+  <name>CEDAR OpenView Server</name>
   <description>CEDAR server to present open metadata
   </description>
 
   <scm>
-    <connection>scm:git:git@github.com:metadatacenter/cedar-open-server.git</connection>
-    <developerConnection>scm:git:git@github.com:metadatacenter/cedar-open-server.git</developerConnection>
-    <url>https://github.com/metadatacenter/cedar-open-server</url>
+    <connection>scm:git:git@github.com:metadatacenter/cedar-openview-server.git</connection>
+    <developerConnection>scm:git:git@github.com:metadatacenter/cedar-openview-server.git</developerConnection>
+    <url>https://github.com/metadatacenter/cedar-openview-server</url>
     <tag>HEAD</tag>
   </scm>
 
   <modules>
-    <module>cedar-open-server-core</module>
-    <module>cedar-open-server-application</module>
+    <module>cedar-openview-server-core</module>
+    <module>cedar-openview-server-application</module>
   </modules>
 
   <build>
