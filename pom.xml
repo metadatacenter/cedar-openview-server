@@ -18,8 +18,8 @@
   </description>
 
   <scm>
-    <connection>scm:git:git@github.com:metadatacenter/cedar-openview-server.git</connection>
-    <developerConnection>scm:git:git@github.com:metadatacenter/cedar-openview-server.git</developerConnection>
+    <connection>scm:git:https://github.com/metadatacenter/cedar-openview-server.git</connection>
+    <developerConnection>scm:git:https://github.com/metadatacenter/cedar-openview-server.git</developerConnection>
     <url>https://github.com/metadatacenter/cedar-openview-server</url>
     <tag>HEAD</tag>
   </scm>
