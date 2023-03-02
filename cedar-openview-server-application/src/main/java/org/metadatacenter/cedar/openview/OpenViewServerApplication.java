@@ -10,6 +10,7 @@ import org.metadatacenter.cedar.util.dw.CedarMicroserviceApplicationWithMongo;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.config.MongoConfig;
 import org.metadatacenter.model.ServerName;
+import org.metadatacenter.server.cache.user.UserSummaryCache;
 
 public class OpenViewServerApplication extends CedarMicroserviceApplicationWithMongo<OpenViewServerConfiguration> {
 
@@ -28,6 +29,8 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
 
   @Override
   public void initializeApp() {
+    UserSummaryCache.init(cedarConfig, userService);
+
     MongoConfig artifactServerConfig = cedarConfig.getArtifactServerConfig();
     CedarDataServices.initializeMongoClientFactoryForDocuments(artifactServerConfig.getMongoConnection());
 
@@ -53,6 +56,9 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
 
     final TemplateInstancesResource instances = new TemplateInstancesResource(cedarConfig, templateInstanceService);
     environment.jersey().register(instances);
+
+    final FoldersResource folders = new FoldersResource(cedarConfig);
+    environment.jersey().register(folders);
 
     final OpenViewServerHealthCheck healthCheck = new OpenViewServerHealthCheck();
     environment.healthChecks().register("message", healthCheck);

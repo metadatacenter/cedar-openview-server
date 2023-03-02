@@ -34,10 +34,14 @@ public abstract class AbstractOpenViewResource extends CedarMicroserviceResource
     if (folderServerResource == null) {
       return CedarResponse.notFound().id(artifactId).build();
     } else {
-      if (folderServerResource.isOpen() != null && folderServerResource.isOpen()) {
+      if (folderServerResource.isOpen()) {
         return Response.ok().build();
       } else {
-        return CedarResponse.unauthorized().id(artifactId).build();
+        if (folderSession.isArtifactOpenImplicitly(artifactId)) {
+          return Response.ok().build();
+        } else {
+          return CedarResponse.unauthorized().id(artifactId).build();
+        }
       }
     }
   }
