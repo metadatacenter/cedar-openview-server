@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
+import org.metadatacenter.http.CedarResponseStatus;
 import org.metadatacenter.id.CedarTemplateId;
 import org.metadatacenter.model.CedarResourceType;
 import org.metadatacenter.server.service.TemplateService;
@@ -38,7 +39,7 @@ public class TemplatesResource extends AbstractOpenViewResource {
   public Response findTemplate(@PathParam(PP_ID) String id) throws CedarException {
     CedarTemplateId tid =  CedarTemplateId.build(id);
     Response response = lookupId(tid, CedarResourceType.TEMPLATE);
-    if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+    if (response.getStatus() != CedarResponseStatus.OK.getStatusCode()) {
       return response;
     } else {
       JsonNode template;
