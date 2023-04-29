@@ -8,7 +8,7 @@
     <version>2.6.25-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.open</groupId>
+  <groupId>org.metadatacenter</groupId>
   <artifactId>cedar-openview-server-core</artifactId>
   <packaging>jar</packaging>
 
