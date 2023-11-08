@@ -72,6 +72,7 @@ public class FoldersResource extends AbstractOpenViewResource {
         for (FolderServerResourceExtract parent : pathInfo) {
           if (parent.getIsOpen() != null && parent.getIsOpen()) {
             foundOpenParent = true;
+            break;
           }
         }
         if (!foundOpenParent) {

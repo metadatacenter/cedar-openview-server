@@ -30,7 +30,7 @@ public class TemplateFieldsResource extends AbstractOpenViewResource {
 
   public TemplateFieldsResource(CedarConfig cedarConfig, TemplateFieldService<String, JsonNode> templateFieldService) {
     super(cedarConfig);
-    this.templateFieldService = templateFieldService;
+    TemplateFieldsResource.templateFieldService = templateFieldService;
   }
 
   @GET

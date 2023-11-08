@@ -30,7 +30,7 @@ public class TemplatesResource extends AbstractOpenViewResource {
 
   public TemplatesResource(CedarConfig cedarConfig, TemplateService<String, JsonNode> templateService) {
     super(cedarConfig);
-    this.templateService = templateService;
+    TemplatesResource.templateService = templateService;
   }
 
   @GET
