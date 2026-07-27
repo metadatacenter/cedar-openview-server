@@ -10,7 +10,7 @@ import org.metadatacenter.rest.context.CedarRequestContext;
 import org.metadatacenter.server.FolderServiceSession;
 import org.metadatacenter.util.http.CedarResponse;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 public abstract class AbstractOpenViewResource extends CedarMicroserviceResource {
 
