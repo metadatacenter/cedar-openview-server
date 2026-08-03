@@ -34,7 +34,7 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
     MongoConfig artifactServerConfig = cedarConfig.getArtifactServerConfig();
     CedarDataServices.initializeMongoClientFactoryForDocuments(artifactServerConfig.getMongoConnection());
 
-    MongoClient mongoClientForDocuments = CedarDataServices.getMongoClientFactoryForDocuments().getClient();
+    MongoClient mongoClientForDocuments = CedarDataServices.getInstance().getMongoClientFactoryForDocuments().getClient();
 
     initMongoServices(mongoClientForDocuments, artifactServerConfig);
   }

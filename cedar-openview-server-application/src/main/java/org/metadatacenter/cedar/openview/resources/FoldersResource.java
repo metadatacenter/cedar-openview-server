@@ -50,9 +50,9 @@ public class FoldersResource extends AbstractOpenViewResource {
                              @QueryParam(QP_LIMIT) Optional<Integer> limitParam,
                              @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
 
-    UserService userService = CedarDataServices.getNeoUserService();
+    UserService userService = dataServices.getNeoUserService();
     CedarRequestContext c = CedarRequestContextFactory.fromAdminUser(cedarConfig, userService);
-    FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
+    FolderServiceSession folderSession = dataServices.getFolderServiceSession(c);
     CedarFolderId fid = CedarFolderId.build(id);
 
     FolderServerFolder folder;
@@ -64,7 +64,7 @@ public class FoldersResource extends AbstractOpenViewResource {
           .errorMessage("The folder can not be found by id:" + id)
           .build();
     } else {
-      ResourcePermissionServiceSession permissionSession = CedarDataServices.getResourcePermissionServiceSession(c);
+      ResourcePermissionServiceSession permissionSession = dataServices.getResourcePermissionServiceSession(c);
       List<FolderServerResourceExtract> pathInfo = PathInfoBuilder.getResourcePathExtract(c, folderSession,
           permissionSession, folder);
       if (!folder.isOpen()) {

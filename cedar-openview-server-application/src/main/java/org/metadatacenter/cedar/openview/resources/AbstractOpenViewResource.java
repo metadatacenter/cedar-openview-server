@@ -14,14 +14,21 @@ import jakarta.ws.rs.core.Response;
 
 public abstract class AbstractOpenViewResource extends CedarMicroserviceResource {
 
+  protected final org.metadatacenter.bridge.CedarDataServices dataServices;
+
   public AbstractOpenViewResource(CedarConfig cedarConfig) {
+    this(cedarConfig, org.metadatacenter.bridge.CedarDataServices.getInstance());
+  }
+
+  public AbstractOpenViewResource(CedarConfig cedarConfig, org.metadatacenter.bridge.CedarDataServices dataServices) {
     super(cedarConfig);
+    this.dataServices = dataServices;
   }
 
   protected Response lookupId(CedarArtifactId artifactId, CedarResourceType resourceType) {
     CedarRequestContext c = buildAnonymousRequestContext();
 
-    FolderServiceSession folderSession = CedarDataServices.getFolderServiceSession(c);
+    FolderServiceSession folderSession = dataServices.getFolderServiceSession(c);
 
     FolderServerArtifact folderServerResource = folderSession.findArtifactById(artifactId);
 
