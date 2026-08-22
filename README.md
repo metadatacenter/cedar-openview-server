@@ -1,6 +1,6 @@
 # cedar-openview-server
 
-[![Build Status](https://travis-ci.com/metadatacenter/cedar-openview-server.svg?branch=master)](https://travis-ci.com/metadatacenter/cedar-openview-server)
+[![CI](https://github.com/metadatacenter/cedar-openview-server/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/metadatacenter/cedar-openview-server/actions/workflows/ci.yml)
 
 CEDAR server to present open metadata
 
