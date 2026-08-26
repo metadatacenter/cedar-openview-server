@@ -46,12 +46,7 @@ public class TemplateFieldsResource extends AbstractOpenViewResource {
       try {
         templateField = templateFieldService.findTemplateField(id);
       } catch (IOException e) {
-        return CedarResponse.internalServerError()
-            .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_FIELD_NOT_FOUND)
-            .errorMessage("The template field can not be found by id:" + id)
-            .exception(e)
-            .build();
+        return artifactStoreUnavailable(fid, e);
       }
       if (templateField == null) {
         return CedarResponse.notFound()

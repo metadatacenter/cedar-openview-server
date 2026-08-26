@@ -46,12 +46,7 @@ public class TemplateInstancesResource extends AbstractOpenViewResource {
       try {
         templateInstance = templateInstanceService.findTemplateInstance(id);
       } catch (IOException e) {
-        return CedarResponse.internalServerError()
-            .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_INSTANCE_NOT_FOUND)
-            .errorMessage("The template instance can not be found by id:" + id)
-            .exception(e)
-            .build();
+        return artifactStoreUnavailable(iid, e);
       }
       if (templateInstance == null) {
         return CedarResponse.notFound()
