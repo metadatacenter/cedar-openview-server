@@ -46,12 +46,7 @@ public class TemplateElementsResource extends AbstractOpenViewResource {
       try {
         templateElement = templateElementService.findTemplateElement(id);
       } catch (IOException e) {
-        return CedarResponse.internalServerError()
-            .id(id)
-            .errorKey(CedarErrorKey.TEMPLATE_ELEMENT_NOT_FOUND)
-            .errorMessage("The template element can not be found by id:" + id)
-            .exception(e)
-            .build();
+        return artifactStoreUnavailable(eid, e);
       }
       if (templateElement == null) {
         return CedarResponse.notFound()
