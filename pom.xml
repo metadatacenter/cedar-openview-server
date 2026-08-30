@@ -24,7 +24,6 @@
   </scm>
 
   <modules>
-    <module>cedar-openview-server-core</module>
     <module>cedar-openview-server-application</module>
   </modules>
 
