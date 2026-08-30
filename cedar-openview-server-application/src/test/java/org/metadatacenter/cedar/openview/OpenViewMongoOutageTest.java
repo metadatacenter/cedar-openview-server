@@ -36,9 +36,9 @@ class OpenViewMongoOutageTest {
 
   static {
     EmbeddedCedarNeo4j.startAndRedirectEnvironment(Map.of(
-        "CEDAR_OPENVIEW_HTTP_PORT", "19032",
-        "CEDAR_OPENVIEW_ADMIN_PORT", "19132",
-        "CEDAR_OPENVIEW_STOP_PORT", "19232",
+        "CEDAR_OPENVIEW_HTTP_PORT", "0",
+        "CEDAR_OPENVIEW_ADMIN_PORT", "0",
+        "CEDAR_OPENVIEW_STOP_PORT", "0",
         "CEDAR_MONGO_HOST", "127.0.0.1",
         "CEDAR_MONGO_PORT", "1",
         "CEDAR_REDIS_PERSISTENT_PORT", "1"));
@@ -84,9 +84,9 @@ class OpenViewMongoOutageTest {
   static void stopServer() {
     SERVER.after();
     EmbeddedCedarMongo.startAndRedirectEnvironment(Map.of(
-        "CEDAR_OPENVIEW_HTTP_PORT", "19032",
-        "CEDAR_OPENVIEW_ADMIN_PORT", "19132",
-        "CEDAR_OPENVIEW_STOP_PORT", "19232",
+        "CEDAR_OPENVIEW_HTTP_PORT", "0",
+        "CEDAR_OPENVIEW_ADMIN_PORT", "0",
+        "CEDAR_OPENVIEW_STOP_PORT", "0",
         "CEDAR_REDIS_PERSISTENT_PORT", "1"));
   }
 

@@ -36,9 +36,9 @@ class OpenViewArtifactReadTest {
 
   static {
     EmbeddedCedarMongo.startAndRedirectEnvironment(Map.of(
-        "CEDAR_OPENVIEW_HTTP_PORT", "19031",
-        "CEDAR_OPENVIEW_ADMIN_PORT", "19131",
-        "CEDAR_OPENVIEW_STOP_PORT", "19231",
+        "CEDAR_OPENVIEW_HTTP_PORT", "0",
+        "CEDAR_OPENVIEW_ADMIN_PORT", "0",
+        "CEDAR_OPENVIEW_STOP_PORT", "0",
         "CEDAR_REDIS_PERSISTENT_PORT", "1"));
     EmbeddedCedarNeo4j.startAndRedirectEnvironment();
   }

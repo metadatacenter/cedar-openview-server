@@ -24,11 +24,11 @@ public class OpenViewServerApplicationSmokeTest {
 
   static {
     // Must run before the test support boots the server, which reads the port env vars.
-    // Alternate server ports, so the test instance never collides with a running dev server.
+    // Let the OS assign both connectors so parallel tests and a running dev server cannot collide.
     Map<String, String> environment = new HashMap<>(CedarEnvironmentSource.getAll());
-    environment.put("CEDAR_OPENVIEW_HTTP_PORT", "19013");
-    environment.put("CEDAR_OPENVIEW_ADMIN_PORT", "19113");
-    environment.put("CEDAR_OPENVIEW_STOP_PORT", "19213");
+    environment.put("CEDAR_OPENVIEW_HTTP_PORT", "0");
+    environment.put("CEDAR_OPENVIEW_ADMIN_PORT", "0");
+    environment.put("CEDAR_OPENVIEW_STOP_PORT", "0");
     CedarEnvironmentSource.setOverride(environment);
   }
 
