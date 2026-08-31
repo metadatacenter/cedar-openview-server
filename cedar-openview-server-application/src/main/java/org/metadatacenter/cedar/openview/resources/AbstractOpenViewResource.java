@@ -16,15 +16,13 @@ import java.io.IOException;
 
 public abstract class AbstractOpenViewResource extends CedarMicroserviceResource {
 
-  protected final org.metadatacenter.bridge.CedarDataServices dataServices;
 
   public AbstractOpenViewResource(CedarConfig cedarConfig) {
-    this(cedarConfig, org.metadatacenter.bridge.CedarDataServices.getInstance());
+    super(cedarConfig);
   }
 
-  public AbstractOpenViewResource(CedarConfig cedarConfig, org.metadatacenter.bridge.CedarDataServices dataServices) {
-    super(cedarConfig);
-    this.dataServices = dataServices;
+  public AbstractOpenViewResource(CedarConfig cedarConfig, CedarDataServices dataServices) {
+    super(cedarConfig, dataServices);
   }
 
   protected Response lookupId(CedarArtifactId artifactId, CedarResourceType resourceType) {
