@@ -2,6 +2,7 @@ package org.metadatacenter.cedar.openview.resources;
 
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
+import org.metadatacenter.cedar.util.dw.AnonymousAccess;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.id.CedarArtifactId;
 import org.metadatacenter.http.CedarResponseStatus;
@@ -25,6 +26,7 @@ public abstract class AbstractOpenViewResource extends CedarMicroserviceResource
     super(cedarConfig, dataServices);
   }
 
+  @AnonymousAccess
   protected Response lookupId(CedarArtifactId artifactId, CedarResourceType resourceType) {
     CedarRequestContext c = buildAnonymousRequestContext();
 
