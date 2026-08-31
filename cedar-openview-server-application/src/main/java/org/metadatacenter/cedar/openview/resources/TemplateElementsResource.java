@@ -1,6 +1,11 @@
 package org.metadatacenter.cedar.openview.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
@@ -24,6 +29,7 @@ import static org.metadatacenter.constant.CedarPathParameters.PP_ID;
 
 @Path("/template-elements")
 @Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "Template elements")
 public class TemplateElementsResource extends AbstractOpenViewResource {
 
   private static TemplateElementService<String, JsonNode> templateElementService;
@@ -36,7 +42,21 @@ public class TemplateElementsResource extends AbstractOpenViewResource {
   @GET
   @Timed
   @Path("/{id}")
-  public Response findTemplateElement(@PathParam(PP_ID) String id) throws CedarException {
+  @Operation(summary = "Get an open template element",
+      description = "Return a template element that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. "
+          + "Mongo's internal `_id` is removed before the artifact is returned.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "The template element"),
+      @ApiResponse(responseCode = "401",
+          description = "The template element exists but is not open, and neither is any folder above it"),
+      @ApiResponse(responseCode = "404", description = "No such template element"),
+      @ApiResponse(responseCode = "503",
+          description = "The artifact store could not be reached after the template element was found to be open")
+  })
+  public Response findTemplateElement(
+      @Parameter(description = "Artifact identifier. Either the bare identifier or the full IRI is "
+          + "accepted; a bare one is resolved to the IRI before lookup.", required = true)
+      @PathParam(PP_ID) String id) throws CedarException {
     CedarElementId eid = CedarElementId.build(id);
     Response response = lookupId(eid, CedarResourceType.ELEMENT);
     if (response.getStatus() != CedarResponseStatus.OK.getStatusCode()) {

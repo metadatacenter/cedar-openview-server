@@ -1,0 +1,219 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "description" : "Better Metadata - Better Science\n\nThe OpenView server hands out CEDAR content that has been marked open, to anyone, without\ncredentials. It is what makes a published artifact citable: the artifact IRI resolves here for a\nreader who has no CEDAR account.\n\nAn artifact or folder is served when it is open itself, or when a folder above it is. Anything\nelse is refused, and nothing here writes.\n",
+    "title" : "CEDAR OpenView Server API",
+    "version" : "2.9.4-SNAPSHOT"
+  },
+  "paths" : {
+    "/folders/{id}" : {
+      "get" : {
+        "description" : "Return what an open folder holds, with the path back to the workspace root. A folder is served when it is marked open, or when a folder above it is. No credentials are involved: this server exists to hand out open content anonymously.",
+        "operationId" : "findFolder",
+        "parameters" : [ {
+          "description" : "Folder identifier.",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Comma-separated artifact types to include, in place of all of them.",
+          "in" : "query",
+          "name" : "resource_types",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Which versions to include: `latest`, `latest-published`, `latest-draft`, or `all`.",
+          "in" : "query",
+          "name" : "version",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Filter by publication status: `draft` or `published`.",
+          "in" : "query",
+          "name" : "publication_status",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Comma-separated sort fields; a leading `-` reverses one.",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Maximum number of entries to return.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Number of entries to skip before the first one returned.",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The folder's contents and its path"
+          },
+          "400" : {
+            "description" : "A paging, sort, or filter parameter is not valid"
+          },
+          "401" : {
+            "description" : "The folder exists but is not open, and neither is any folder above it"
+          },
+          "404" : {
+            "description" : "No such folder"
+          }
+        },
+        "summary" : "List the contents of an open folder",
+        "tags" : [ "Folders" ]
+      }
+    },
+    "/template-elements/{id}" : {
+      "get" : {
+        "description" : "Return a template element that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "operationId" : "findTemplateElement",
+        "parameters" : [ {
+          "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The template element"
+          },
+          "401" : {
+            "description" : "The template element exists but is not open, and neither is any folder above it"
+          },
+          "404" : {
+            "description" : "No such template element"
+          },
+          "503" : {
+            "description" : "The artifact store could not be reached after the template element was found to be open"
+          }
+        },
+        "summary" : "Get an open template element",
+        "tags" : [ "Template elements" ]
+      }
+    },
+    "/template-fields/{id}" : {
+      "get" : {
+        "description" : "Return a template field that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "operationId" : "findTemplateField",
+        "parameters" : [ {
+          "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The template field"
+          },
+          "401" : {
+            "description" : "The template field exists but is not open, and neither is any folder above it"
+          },
+          "404" : {
+            "description" : "No such template field"
+          },
+          "503" : {
+            "description" : "The artifact store could not be reached after the template field was found to be open"
+          }
+        },
+        "summary" : "Get an open template field",
+        "tags" : [ "Template fields" ]
+      }
+    },
+    "/template-instances/{id}" : {
+      "get" : {
+        "description" : "Return a template instance that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "operationId" : "findTemplateInstance",
+        "parameters" : [ {
+          "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The template instance"
+          },
+          "401" : {
+            "description" : "The template instance exists but is not open, and neither is any folder above it"
+          },
+          "404" : {
+            "description" : "No such template instance"
+          },
+          "503" : {
+            "description" : "The artifact store could not be reached after the template instance was found to be open"
+          }
+        },
+        "summary" : "Get an open template instance",
+        "tags" : [ "Template instances" ]
+      }
+    },
+    "/templates/{id}" : {
+      "get" : {
+        "description" : "Return a template that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "operationId" : "findTemplate",
+        "parameters" : [ {
+          "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The template"
+          },
+          "401" : {
+            "description" : "The template exists but is not open, and neither is any folder above it"
+          },
+          "404" : {
+            "description" : "No such template"
+          },
+          "503" : {
+            "description" : "The artifact store could not be reached after the template was found to be open"
+          }
+        },
+        "summary" : "Get an open template",
+        "tags" : [ "Templates" ]
+      }
+    }
+  },
+  "components" : {
+    "securitySchemes" : {
+      "api_key" : {
+        "description" : "Your CEDAR API key, using the format 'apiKey <yourApiKey>'",
+        "in" : "header",
+        "name" : "Authorization",
+        "type" : "apiKey"
+      }
+    }
+  }
+}
