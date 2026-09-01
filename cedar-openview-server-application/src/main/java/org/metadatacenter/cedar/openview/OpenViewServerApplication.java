@@ -5,7 +5,7 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.openview.resources.*;
-import org.metadatacenter.cedar.util.dw.CedarDefaultHealthCheck;
+import org.metadatacenter.cedar.util.dw.CedarMicroserviceIndexResource;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceApplicationWithMongo;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.config.MongoConfig;
@@ -42,7 +42,8 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
   @Override
   public void runApp(OpenViewServerConfiguration configuration, Environment environment) {
 
-    final IndexResource index = new IndexResource(cedarConfig);
+    final CedarMicroserviceIndexResource index =
+        new CedarMicroserviceIndexResource(cedarConfig, getServerName());
     environment.jersey().register(index);
 
     final TemplateFieldsResource fields = new TemplateFieldsResource(cedarConfig, templateFieldService);
@@ -60,7 +61,5 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
     final FoldersResource folders = new FoldersResource(cedarConfig);
     environment.jersey().register(folders);
 
-    final CedarDefaultHealthCheck healthCheck = new CedarDefaultHealthCheck();
-    environment.healthChecks().register("message", healthCheck);
   }
 }

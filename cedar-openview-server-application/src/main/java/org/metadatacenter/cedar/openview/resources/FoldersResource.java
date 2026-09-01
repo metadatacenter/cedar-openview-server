@@ -1,6 +1,11 @@
 package org.metadatacenter.cedar.openview.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.bridge.PathInfoBuilder;
 import org.metadatacenter.config.CedarConfig;
@@ -33,6 +38,7 @@ import static org.metadatacenter.constant.CedarQueryParameters.*;
 
 @Path("/folders")
 @Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "Folders")
 public class FoldersResource extends AbstractOpenViewResource {
 
   public FoldersResource(CedarConfig cedarConfig) {
@@ -42,13 +48,32 @@ public class FoldersResource extends AbstractOpenViewResource {
   @GET
   @Timed
   @Path("/{id}")
-  public Response findFolder(@PathParam(PP_ID) String id,
-                             @QueryParam(QP_RESOURCE_TYPES) Optional<String> resourceTypes,
-                             @QueryParam(QP_VERSION) Optional<String> versionParam,
-                             @QueryParam(QP_PUBLICATION_STATUS) Optional<String> publicationStatusParam,
-                             @QueryParam(QP_SORT) Optional<String> sortParam,
-                             @QueryParam(QP_LIMIT) Optional<Integer> limitParam,
-                             @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
+  @Operation(summary = "List the contents of an open folder",
+      description = "Return what an open folder holds, with the path back to the workspace root. "
+          + "A folder is served when it is marked open, or when a folder above it is. No credentials "
+          + "are involved: this server exists to hand out open content anonymously.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "The folder's contents and its path"),
+      @ApiResponse(responseCode = "400", description = "A paging, sort, or filter parameter is not valid"),
+      @ApiResponse(responseCode = "401",
+          description = "The folder exists but is not open, and neither is any folder above it"),
+      @ApiResponse(responseCode = "404", description = "No such folder")
+  })
+  public Response findFolder(
+      @Parameter(description = "Folder identifier.", required = true)
+      @PathParam(PP_ID) String id,
+      @Parameter(description = "Comma-separated artifact types to include, in place of all of them.")
+      @QueryParam(QP_RESOURCE_TYPES) Optional<String> resourceTypes,
+      @Parameter(description = "Which versions to include: `latest`, `latest-published`, `latest-draft`, or `all`.")
+      @QueryParam(QP_VERSION) Optional<String> versionParam,
+      @Parameter(description = "Filter by publication status: `draft` or `published`.")
+      @QueryParam(QP_PUBLICATION_STATUS) Optional<String> publicationStatusParam,
+      @Parameter(description = "Comma-separated sort fields; a leading `-` reverses one.")
+      @QueryParam(QP_SORT) Optional<String> sortParam,
+      @Parameter(description = "Maximum number of entries to return.")
+      @QueryParam(QP_LIMIT) Optional<Integer> limitParam,
+      @Parameter(description = "Number of entries to skip before the first one returned.")
+      @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
 
     UserService userService = dataServices.getNeoUserService();
     CedarRequestContext c = CedarRequestContextFactory.fromAdminUser(cedarConfig, userService);

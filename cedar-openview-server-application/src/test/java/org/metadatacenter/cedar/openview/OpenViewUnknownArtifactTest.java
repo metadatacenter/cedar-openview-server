@@ -30,12 +30,12 @@ public class OpenViewUnknownArtifactTest {
 
   static {
     // Must run before the test support boots the server, which reads the Neo4j and port env vars.
-    // Ports are distinct from the dev server and from every other booting test class. Redis goes to
-    // a dead port: no endpoint under test depends on a live Redis.
+    // Let the OS assign the server ports. Redis goes to a dead port: no endpoint under test depends
+    // on a live Redis.
     EmbeddedCedarNeo4j.startAndRedirectEnvironment(Map.of(
-        "CEDAR_OPENVIEW_HTTP_PORT", "19030",
-        "CEDAR_OPENVIEW_ADMIN_PORT", "19130",
-        "CEDAR_OPENVIEW_STOP_PORT", "19230",
+        "CEDAR_OPENVIEW_HTTP_PORT", "0",
+        "CEDAR_OPENVIEW_ADMIN_PORT", "0",
+        "CEDAR_OPENVIEW_STOP_PORT", "0",
         "CEDAR_REDIS_PERSISTENT_PORT", "1"));
   }
 

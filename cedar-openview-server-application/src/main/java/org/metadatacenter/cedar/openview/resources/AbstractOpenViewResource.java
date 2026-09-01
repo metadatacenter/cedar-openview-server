@@ -2,6 +2,7 @@ package org.metadatacenter.cedar.openview.resources;
 
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
+import org.metadatacenter.cedar.util.dw.AnonymousAccess;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.id.CedarArtifactId;
 import org.metadatacenter.http.CedarResponseStatus;
@@ -16,17 +17,16 @@ import java.io.IOException;
 
 public abstract class AbstractOpenViewResource extends CedarMicroserviceResource {
 
-  protected final org.metadatacenter.bridge.CedarDataServices dataServices;
 
   public AbstractOpenViewResource(CedarConfig cedarConfig) {
-    this(cedarConfig, org.metadatacenter.bridge.CedarDataServices.getInstance());
-  }
-
-  public AbstractOpenViewResource(CedarConfig cedarConfig, org.metadatacenter.bridge.CedarDataServices dataServices) {
     super(cedarConfig);
-    this.dataServices = dataServices;
   }
 
+  public AbstractOpenViewResource(CedarConfig cedarConfig, CedarDataServices dataServices) {
+    super(cedarConfig, dataServices);
+  }
+
+  @AnonymousAccess
   protected Response lookupId(CedarArtifactId artifactId, CedarResourceType resourceType) {
     CedarRequestContext c = buildAnonymousRequestContext();
 
