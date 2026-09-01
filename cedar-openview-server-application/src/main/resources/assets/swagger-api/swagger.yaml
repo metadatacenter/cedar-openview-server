@@ -10,7 +10,7 @@ info:
     An artifact or folder is served when it is open itself, or when a folder above it is. Anything
     else is refused, and nothing here writes.
   title: CEDAR OpenView Server API
-  version: 2.9.4-SNAPSHOT
+  version: 2.9.5-SNAPSHOT
 paths:
   /folders/{id}:
     get:
