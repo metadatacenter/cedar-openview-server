@@ -3,7 +3,7 @@
   "info" : {
     "description" : "Better Metadata - Better Science\n\nThe OpenView server hands out CEDAR content that has been marked open, to anyone, without\ncredentials. It is what makes a published artifact citable: the artifact IRI resolves here for a\nreader who has no CEDAR account.\n\nAn artifact or folder is served when it is open itself, or when a folder above it is. Anything\nelse is refused, and nothing here writes.\n",
     "title" : "CEDAR OpenView Server API",
-    "version" : "2.9.5"
+    "version" : "2.9.6"
   },
   "paths" : {
     "/folders/{id}" : {
