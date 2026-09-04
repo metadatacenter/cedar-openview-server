@@ -3,10 +3,13 @@ package org.metadatacenter.cedar.openview.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.metadatacenter.util.http.CedarError;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
@@ -47,10 +50,10 @@ public class TemplateFieldsResource extends AbstractOpenViewResource {
           + "Mongo's internal `_id` is removed before the artifact is returned.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "The template field"),
-      @ApiResponse(responseCode = "401",
+      @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = CedarError.class)),
           description = "The template field exists but is not open, and neither is any folder above it"),
-      @ApiResponse(responseCode = "404", description = "No such template field"),
-      @ApiResponse(responseCode = "503",
+      @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = CedarError.class)), description = "No such template field"),
+      @ApiResponse(responseCode = "503", content = @Content(schema = @Schema(implementation = CedarError.class)),
           description = "The artifact store could not be reached after the template field was found to be open")
   })
   public Response findTemplateField(
