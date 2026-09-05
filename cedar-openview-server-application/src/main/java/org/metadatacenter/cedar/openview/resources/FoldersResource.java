@@ -3,9 +3,12 @@ package org.metadatacenter.cedar.openview.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.metadatacenter.util.http.CedarError;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.bridge.PathInfoBuilder;
 import org.metadatacenter.config.CedarConfig;
@@ -54,10 +57,10 @@ public class FoldersResource extends AbstractOpenViewResource {
           + "are involved: this server exists to hand out open content anonymously.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "The folder's contents and its path"),
-      @ApiResponse(responseCode = "400", description = "A paging, sort, or filter parameter is not valid"),
-      @ApiResponse(responseCode = "401",
+      @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = CedarError.class)), description = "A paging, sort, or filter parameter is not valid"),
+      @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = CedarError.class)),
           description = "The folder exists but is not open, and neither is any folder above it"),
-      @ApiResponse(responseCode = "404", description = "No such folder")
+      @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = CedarError.class)), description = "No such folder")
   })
   public Response findFolder(
       @Parameter(description = "Folder identifier.", required = true)
