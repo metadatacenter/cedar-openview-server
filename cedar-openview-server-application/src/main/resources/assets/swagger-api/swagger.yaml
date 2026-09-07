@@ -10,7 +10,7 @@ info:
     An artifact or folder is served when it is open itself, or when a folder above it is. Anything
     else is refused, and nothing here writes.
   title: CEDAR OpenView Server API
-  version: 2.9.8
+  version: 2.9.9
 paths:
   /folders/{id}:
     get:
@@ -313,6 +313,7 @@ components:
           - noWriteAccessToTemplateInstance
           - noReadAccessToArtifact
           - noWriteAccessToArtifact
+          - noReadAccessToCategory
           - noWriteAccessToCategory
           - folderNotFound
           - artifactNotFound
@@ -365,6 +366,7 @@ components:
           - groupAlreadyPresent
           - groupCanBeModifiedOnlyByGroupAdmin
           - groupCanBeDeletedOnlyByGroupAdmin
+          - groupRequiresAdministrator
           - groupUsersNotUpdated
           - specialGroupCanNotBeDeleted
           - folderPermissionsCanNotBeChanged
