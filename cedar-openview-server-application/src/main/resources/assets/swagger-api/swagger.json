@@ -27,7 +27,7 @@
     },
     "/folders/{id}" : {
       "get" : {
-        "description" : "Return what an open folder holds, with the path back to the workspace root. A folder is served when it is marked open, or when a folder above it is. No credentials are involved: this server exists to hand out open content anonymously.",
+        "description" : "Return an anonymous public projection of what an open folder holds. Opening a folder makes its whole descendant subtree readable through OpenView. The breadcrumb contains ancestor names only; child summaries contain only their identifier, type, and name. No ACL, provenance, timestamp, DOI, or caller-specific permission fields are returned.",
         "operationId" : "findFolder",
         "parameters" : [ {
           "description" : "Folder identifier.",
@@ -87,7 +87,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ResourceListResponse"
+                  "$ref" : "#/components/schemas/OpenViewFolderResponse"
                 }
               }
             },
@@ -876,32 +876,16 @@
           }
         }
       },
-      "ResourceListResponse" : {
+      "OpenViewFolderResponse" : {
         "type" : "object",
-        "additionalProperties" : true,
-        "description" : "One page of folders and artifact summaries. Optional category, path, and continuation\nproperties appear only for query modes that produce them.\n",
+        "additionalProperties" : false,
+        "description" : "One page of an anonymously readable folder. Opening a folder makes the full subtree below\nit public through OpenView. The response is caller-independent and contains only public\nchild summaries, ancestor names, and normalized paging metadata.\n",
         "properties" : {
           "@context" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
-          },
-          "categoryName" : {
-            "type" : "string",
-            "nullable" : true
-          },
-          "categoryPath" : {
-            "type" : "array",
-            "items" : {
-              "type" : "object",
-              "additionalProperties" : true
-            },
-            "nullable" : true
-          },
-          "continuation" : {
-            "type" : "string",
-            "description" : "Opaque token for the next deep-search page; absent at the end."
           },
           "currentOffset" : {
             "type" : "integer",
@@ -920,9 +904,8 @@
           "pathInfo" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ResourceSummary"
-            },
-            "nullable" : true
+              "$ref" : "#/components/schemas/OpenViewPathSegment"
+            }
           },
           "request" : {
             "$ref" : "#/components/schemas/NodeListRequest"
@@ -930,7 +913,7 @@
           "resources" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ResourceSummary"
+              "$ref" : "#/components/schemas/OpenViewResourceSummary"
             }
           },
           "totalCount" : {
@@ -938,42 +921,39 @@
             "format" : "int64"
           }
         },
-        "required" : [ "@context", "currentOffset", "nodeListQueryType", "resources", "totalCount" ]
+        "required" : [ "@context", "currentOffset", "nodeListQueryType", "pathInfo", "request", "resources", "totalCount" ]
       },
-      "ResourceSummary" : {
+      "OpenViewPathSegment" : {
         "type" : "object",
-        "additionalProperties" : true,
-        "description" : "A folder or artifact summary. The exact additional properties depend on the resource type\nand on the fields requested by the caller.\n",
+        "additionalProperties" : false,
+        "description" : "One breadcrumb segment. Ancestor names are public when a folder is open, but ancestor\nidentifiers and all other graph properties are not.\n",
+        "properties" : {
+          "schema:name" : {
+            "type" : "string",
+            "nullable" : true
+          }
+        },
+        "required" : [ "schema:name" ]
+      },
+      "OpenViewResourceSummary" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "description" : "The complete public summary of one direct child of an open folder. OpenView intentionally\nexcludes ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other\nstored graph properties.\n",
         "properties" : {
           "@id" : {
             "type" : "string",
             "format" : "uri"
           },
-          "activeUserCanRead" : {
-            "type" : "boolean"
-          },
-          "createdOnTS" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "lastUpdatedOnTS" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
           "resourceType" : {
             "type" : "string",
             "enum" : [ "folder", "field", "element", "template", "instance" ]
-          },
-          "schema:description" : {
-            "type" : "string",
-            "nullable" : true
           },
           "schema:name" : {
             "type" : "string",
             "nullable" : true
           }
         },
-        "required" : [ "@id", "resourceType" ]
+        "required" : [ "@id", "resourceType", "schema:name" ]
       },
       "SchemaArtifactDocument" : {
         "type" : "object",

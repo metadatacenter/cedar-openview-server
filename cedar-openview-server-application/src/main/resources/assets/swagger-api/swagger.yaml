@@ -27,10 +27,11 @@ paths:
       - Service
   /folders/{id}:
     get:
-      description: "Return what an open folder holds, with the path back to the workspace\
-        \ root. A folder is served when it is marked open, or when a folder above\
-        \ it is. No credentials are involved: this server exists to hand out open\
-        \ content anonymously."
+      description: "Return an anonymous public projection of what an open folder holds.\
+        \ Opening a folder makes its whole descendant subtree readable through OpenView.\
+        \ The breadcrumb contains ancestor names only; child summaries contain only\
+        \ their identifier, type, and name. No ACL, provenance, timestamp, DOI, or\
+        \ caller-specific permission fields are returned."
       operationId: findFolder
       parameters:
       - description: Folder identifier.
@@ -78,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ResourceListResponse"
+                $ref: "#/components/schemas/OpenViewFolderResponse"
           description: The folder's contents and its path
         "400":
           content:
@@ -811,29 +812,18 @@ components:
         version:
           type: string
           nullable: true
-    ResourceListResponse:
+    OpenViewFolderResponse:
       type: object
-      additionalProperties: true
+      additionalProperties: false
       description: |
-        One page of folders and artifact summaries. Optional category, path, and continuation
-        properties appear only for query modes that produce them.
+        One page of an anonymously readable folder. Opening a folder makes the full subtree below
+        it public through OpenView. The response is caller-independent and contains only public
+        child summaries, ancestor names, and normalized paging metadata.
       properties:
         '@context':
           type: object
           additionalProperties:
             type: string
-        categoryName:
-          type: string
-          nullable: true
-        categoryPath:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-          nullable: true
-        continuation:
-          type: string
-          description: Opaque token for the next deep-search page; absent at the end.
         currentOffset:
           type: integer
           format: int64
@@ -847,14 +837,13 @@ components:
         pathInfo:
           type: array
           items:
-            $ref: "#/components/schemas/ResourceSummary"
-          nullable: true
+            $ref: "#/components/schemas/OpenViewPathSegment"
         request:
           $ref: "#/components/schemas/NodeListRequest"
         resources:
           type: array
           items:
-            $ref: "#/components/schemas/ResourceSummary"
+            $ref: "#/components/schemas/OpenViewResourceSummary"
         totalCount:
           type: integer
           format: int64
@@ -862,26 +851,33 @@ components:
       - '@context'
       - currentOffset
       - nodeListQueryType
+      - pathInfo
+      - request
       - resources
       - totalCount
-    ResourceSummary:
+    OpenViewPathSegment:
       type: object
-      additionalProperties: true
+      additionalProperties: false
       description: |
-        A folder or artifact summary. The exact additional properties depend on the resource type
-        and on the fields requested by the caller.
+        One breadcrumb segment. Ancestor names are public when a folder is open, but ancestor
+        identifiers and all other graph properties are not.
+      properties:
+        schema:name:
+          type: string
+          nullable: true
+      required:
+      - schema:name
+    OpenViewResourceSummary:
+      type: object
+      additionalProperties: false
+      description: |
+        The complete public summary of one direct child of an open folder. OpenView intentionally
+        excludes ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other
+        stored graph properties.
       properties:
         '@id':
           type: string
           format: uri
-        activeUserCanRead:
-          type: boolean
-        createdOnTS:
-          type: integer
-          format: int64
-        lastUpdatedOnTS:
-          type: integer
-          format: int64
         resourceType:
           type: string
           enum:
@@ -890,15 +886,13 @@ components:
           - element
           - template
           - instance
-        schema:description:
-          type: string
-          nullable: true
         schema:name:
           type: string
           nullable: true
       required:
       - '@id'
       - resourceType
+      - schema:name
     SchemaArtifactDocument:
       type: object
       additionalProperties: true

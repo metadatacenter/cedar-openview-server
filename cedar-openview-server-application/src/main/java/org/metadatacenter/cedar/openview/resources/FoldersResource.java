@@ -8,24 +8,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.metadatacenter.cedar.openview.model.OpenViewFolderResponse;
+import org.metadatacenter.cedar.util.dw.AnonymousAccess;
 import org.metadatacenter.util.http.CedarError;
-import org.metadatacenter.bridge.CedarDataServices;
-import org.metadatacenter.bridge.PathInfoBuilder;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
 import org.metadatacenter.id.CedarFolderId;
 import org.metadatacenter.model.folderserver.basic.FolderServerFolder;
 import org.metadatacenter.model.folderserver.extract.FolderServerResourceExtract;
-import org.metadatacenter.model.response.FolderServerNodeListResponse;
+import org.metadatacenter.model.request.NodeListRequest;
 import org.metadatacenter.rest.context.CedarRequestContext;
-import org.metadatacenter.rest.context.CedarRequestContextFactory;
 import org.metadatacenter.server.FolderServiceSession;
-import org.metadatacenter.server.ResourcePermissionServiceSession;
-import org.metadatacenter.server.cache.user.ProvenanceNameUtil;
-import org.metadatacenter.server.service.UserService;
 import org.metadatacenter.util.NodeListUtil;
 import org.metadatacenter.util.http.CedarResponse;
+import org.metadatacenter.util.http.LinkHeaderUtil;
 import org.metadatacenter.util.http.PagedSortedTypedQuery;
 
 import jakarta.ws.rs.*;
@@ -51,13 +48,15 @@ public class FoldersResource extends AbstractOpenViewResource {
   @GET
   @Timed
   @Path("/{id}")
+  @AnonymousAccess
   @Operation(summary = "List the contents of an open folder",
-      description = "Return what an open folder holds, with the path back to the workspace root. "
-          + "A folder is served when it is marked open, or when a folder above it is. No credentials "
-          + "are involved: this server exists to hand out open content anonymously.")
+      description = "Return an anonymous public projection of what an open folder holds. Opening a "
+          + "folder makes its whole descendant subtree readable through OpenView. The breadcrumb "
+          + "contains ancestor names only; child summaries contain only their identifier, type, and "
+          + "name. No ACL, provenance, timestamp, DOI, or caller-specific permission fields are returned.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "The folder's contents and its path",
-          content = @Content(schema = @Schema(ref = "#/components/schemas/ResourceListResponse"))),
+          content = @Content(schema = @Schema(ref = "#/components/schemas/OpenViewFolderResponse"))),
       @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = CedarError.class)), description = "A paging, sort, or filter parameter is not valid"),
       @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = CedarError.class)),
           description = "The folder exists but is not open, and neither is any folder above it"),
@@ -79,8 +78,7 @@ public class FoldersResource extends AbstractOpenViewResource {
       @Parameter(description = "Number of entries to skip before the first one returned.")
       @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
 
-    UserService userService = dataServices.getNeoUserService();
-    CedarRequestContext c = CedarRequestContextFactory.fromAdminUser(cedarConfig, userService);
+    CedarRequestContext c = buildAnonymousRequestContext();
     FolderServiceSession folderSession = dataServices.getFolderServiceSession(c);
     CedarFolderId fid = CedarFolderId.build(id);
 
@@ -93,22 +91,12 @@ public class FoldersResource extends AbstractOpenViewResource {
           .errorMessage("The folder can not be found by id:" + id)
           .build();
     } else {
-      ResourcePermissionServiceSession permissionSession = dataServices.getResourcePermissionServiceSession(c);
-      List<FolderServerResourceExtract> pathInfo = PathInfoBuilder.getResourcePathExtract(c, folderSession,
-          permissionSession, folder);
-      if (!folder.isOpen()) {
-        boolean foundOpenParent = false;
-        for (FolderServerResourceExtract parent : pathInfo) {
-          if (parent.getIsOpen() != null && parent.getIsOpen()) {
-            foundOpenParent = true;
-            break;
-          }
-        }
-        if (!foundOpenParent) {
-          return CedarResponse.unauthorized()
-              .id(id)
-              .build();
-        }
+      List<FolderServerResourceExtract> pathInfo = folderSession.findNodePathExtract(folder);
+      boolean hasOpenAncestor = pathInfo.stream().anyMatch(path -> Boolean.TRUE.equals(path.getIsOpen()));
+      if (!folder.isOpen() && !hasOpenAncestor) {
+        return CedarResponse.unauthorized()
+            .id(id)
+            .build();
       }
 
       PagedSortedTypedQuery pagedSortedTypedQuery = new PagedSortedTypedQuery(
@@ -129,10 +117,12 @@ public class FoldersResource extends AbstractOpenViewResource {
           .queryParam(QP_SORT, pagedSortedTypedQuery.getSortListAsString())
           .build();
 
-      FolderServerNodeListResponse r = NodeListUtil.findFolderContents(cedarConfig, folderSession, fid,
-          absoluteURI.toString(), pathInfo, pagedSortedTypedQuery);
-
-      ProvenanceNameUtil.addProvenanceDisplayNames(r);
+      NodeListRequest request = NodeListUtil.buildNodeListRequest(pagedSortedTypedQuery);
+      List<FolderServerResourceExtract> resources = folderSession.findFolderContentsExtract(fid, request);
+      long total = folderSession.findFolderContentsCount(fid, request);
+      OpenViewFolderResponse r = new OpenViewFolderResponse(request, total,
+          LinkHeaderUtil.getPagingLinkHeaders(absoluteURI.toString(), total, request.getLimit(), request.getOffset()),
+          resources, pathInfo);
 
       return Response.ok().entity(r).build();
     }
