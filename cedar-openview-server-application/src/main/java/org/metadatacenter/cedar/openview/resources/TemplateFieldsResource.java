@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.metadatacenter.util.http.CedarError;
+import org.metadatacenter.util.artifact.SchemaArtifactDocument;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.exception.CedarException;
@@ -49,7 +50,8 @@ public class TemplateFieldsResource extends AbstractOpenViewResource {
       description = "Return a template field that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. "
           + "Mongo's internal `_id` is removed before the artifact is returned.")
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "The template field"),
+      @ApiResponse(responseCode = "200", description = "The template field",
+          content = @Content(schema = @Schema(implementation = SchemaArtifactDocument.class))),
       @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = CedarError.class)),
           description = "The template field exists but is not open, and neither is any folder above it"),
       @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = CedarError.class)), description = "No such template field"),

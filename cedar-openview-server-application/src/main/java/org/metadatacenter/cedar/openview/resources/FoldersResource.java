@@ -56,7 +56,8 @@ public class FoldersResource extends AbstractOpenViewResource {
           + "A folder is served when it is marked open, or when a folder above it is. No credentials "
           + "are involved: this server exists to hand out open content anonymously.")
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "The folder's contents and its path"),
+      @ApiResponse(responseCode = "200", description = "The folder's contents and its path",
+          content = @Content(schema = @Schema(ref = "#/components/schemas/ResourceListResponse"))),
       @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = CedarError.class)), description = "A paging, sort, or filter parameter is not valid"),
       @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = CedarError.class)),
           description = "The folder exists but is not open, and neither is any folder above it"),
