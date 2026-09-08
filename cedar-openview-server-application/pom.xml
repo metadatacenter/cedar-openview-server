@@ -149,6 +149,7 @@
         <configuration>
           <resourcePackages>
             <package>org.metadatacenter.cedar.openview.resources</package>
+            <package>org.metadatacenter.cedar.util.dw</package>
           </resourcePackages>
         </configuration>
       </plugin>
