@@ -15,6 +15,127 @@ info:
     else is refused, and nothing here writes.
   version: ${project.version}
 components:
+  schemas:
+    OpenViewResourceSummary:
+      type: object
+      description: |
+        The complete public summary of one direct child of an open folder. OpenView intentionally
+        excludes ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other
+        stored graph properties.
+      required:
+        - '@id'
+        - resourceType
+        - 'schema:name'
+      properties:
+        '@id':
+          type: string
+          format: uri
+        resourceType:
+          type: string
+          enum: [folder, field, element, template, instance]
+        'schema:name':
+          type: string
+          nullable: true
+      additionalProperties: false
+    OpenViewPathSegment:
+      type: object
+      description: |
+        One breadcrumb segment. Ancestor names are public when a folder is open, but ancestor
+        identifiers and all other graph properties are not.
+      required:
+        - 'schema:name'
+      properties:
+        'schema:name':
+          type: string
+          nullable: true
+      additionalProperties: false
+    NodeListRequest:
+      type: object
+      description: The normalized search and paging criteria used for this response.
+      properties:
+        resource_types:
+          type: array
+          items:
+            type: string
+        version:
+          type: string
+          nullable: true
+        publicationStatus:
+          type: string
+          nullable: true
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        sort:
+          type: array
+          nullable: true
+          items:
+            type: string
+        q:
+          type: string
+          nullable: true
+        id:
+          type: string
+          format: uri
+          nullable: true
+        categoryId:
+          type: string
+          format: uri
+          nullable: true
+        mode:
+          type: string
+          nullable: true
+        is_based_on:
+          type: string
+          format: uri
+          nullable: true
+      additionalProperties: false
+    OpenViewFolderResponse:
+      type: object
+      description: |
+        One page of an anonymously readable folder. Opening a folder makes the full subtree below
+        it public through OpenView. The response is caller-independent and contains only public
+        child summaries, ancestor names, and normalized paging metadata.
+      required:
+        - resources
+        - pathInfo
+        - totalCount
+        - currentOffset
+        - nodeListQueryType
+        - request
+        - '@context'
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenViewResourceSummary'
+        pathInfo:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenViewPathSegment'
+        totalCount:
+          type: integer
+          format: int64
+        currentOffset:
+          type: integer
+          format: int64
+        paging:
+          type: object
+          additionalProperties:
+            type: string
+            format: uri
+        nodeListQueryType:
+          type: string
+        request:
+          $ref: '#/components/schemas/NodeListRequest'
+        '@context':
+          type: object
+          additionalProperties:
+            type: string
+      additionalProperties: false
   securitySchemes:
     api_key:
       type: apiKey
