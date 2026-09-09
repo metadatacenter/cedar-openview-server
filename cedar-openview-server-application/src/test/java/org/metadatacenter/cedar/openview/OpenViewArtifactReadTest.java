@@ -131,7 +131,7 @@ class OpenViewArtifactReadTest {
     HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
     Assertions.assertEquals(200, response.statusCode(), response.body());
-    JsonNode artifact = JsonMapper.MAPPER.readTree(response.body());
+    JsonNode artifact = JsonMapper.STRICT_MAPPER.readTree(response.body());
     Assertions.assertEquals(templateId, artifact.path("@id").asText());
     Assertions.assertEquals("OpenView readable template", artifact.path("schema:name").asText());
     Assertions.assertTrue(artifact.path("_id").isMissingNode(), response.body());
@@ -142,7 +142,7 @@ class OpenViewArtifactReadTest {
     HttpResponse<String> response = getFolder(inheritedOpenFolderId);
 
     Assertions.assertEquals(200, response.statusCode(), response.body());
-    JsonNode body = JsonMapper.MAPPER.readTree(response.body());
+    JsonNode body = JsonMapper.STRICT_MAPPER.readTree(response.body());
     Assertions.assertEquals(1, body.path("totalCount").asInt(), response.body());
     Assertions.assertEquals("folder-content", body.path("nodeListQueryType").asText(), response.body());
 

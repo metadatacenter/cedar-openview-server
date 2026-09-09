@@ -27,7 +27,7 @@ class AbstractOpenViewResourceTest {
     assertEquals("Artifact store is unavailable", error.errorMessage);
     assertEquals(id, error.parameters.get("id"));
     assertNotNull(error.errorId, "server logs need a correlation id for the hidden exception");
-    String rendered = JsonMapper.MAPPER.valueToTree(error).toString();
+    String rendered = JsonMapper.STRICT_MAPPER.valueToTree(error).toString();
     assertFalse(rendered.contains("secret-host"), "the response must not expose the Mongo endpoint");
     assertFalse(rendered.contains("IOException"), "the response must not expose the exception type");
   }
