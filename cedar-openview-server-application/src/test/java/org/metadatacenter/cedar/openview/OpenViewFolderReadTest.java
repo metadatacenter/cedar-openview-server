@@ -3,7 +3,6 @@ package org.metadatacenter.cedar.openview;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.testing.ResourceHelpers;
-import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +20,6 @@ import org.metadatacenter.rest.context.CedarRequestContext;
 import org.metadatacenter.rest.context.CedarRequestContextFactory;
 import org.metadatacenter.server.FolderServiceSession;
 import org.metadatacenter.util.json.JsonMapper;
-import org.metadatacenter.util.test.EmbeddedCedarMongo;
 import org.metadatacenter.util.test.EmbeddedCedarNeo4j;
 import org.metadatacenter.util.test.TestAuthUtil;
 
@@ -35,11 +33,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/** Exercises an anonymous OpenView read through both the graph and Mongo persistence layers. */
-class OpenViewArtifactReadTest {
+/** Folder projections retain their graph-backed anonymous contract. */
+class OpenViewFolderReadTest {
 
   static {
-    EmbeddedCedarMongo.startAndRedirectEnvironment(Map.of(
+    EmbeddedCedarNeo4j.startAndRedirectEnvironment(Map.of(
         "CEDAR_OPENVIEW_HTTP_PORT", "0",
         "CEDAR_OPENVIEW_ADMIN_PORT", "0",
         "CEDAR_OPENVIEW_STOP_PORT", "0",
@@ -105,36 +103,11 @@ class OpenViewArtifactReadTest {
     closedFolderId = createFolder(cedarConfig, folderSession, homeFolderId,
         "OpenView closed folder").getId();
 
-    com.mongodb.client.MongoClient mongoClient =
-        CedarDataServices.getInstance().getMongoClientFactoryForDocuments().getClient();
-    org.metadatacenter.config.MongoConfig mongoConfig = cedarConfig.getArtifactServerConfig();
-    mongoClient.getDatabase(mongoConfig.getDatabaseName())
-        .getCollection(mongoConfig.getMongoCollectionName(CedarResourceType.TEMPLATE))
-        .insertOne(new Document("_id", "private-mongo-id")
-            .append("@id", templateId)
-            .append("schema:name", "OpenView readable template"));
   }
 
   @AfterAll
   static void stopServer() {
     SERVER.after();
-  }
-
-  @Test
-  void anonymousReadReturnsOpenArtifactWithoutMongoId() throws Exception {
-    String encodedId = URLEncoder.encode(templateId, StandardCharsets.UTF_8);
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("http://localhost:" + SERVER.getLocalPort() + "/templates/" + encodedId))
-        .GET()
-        .build();
-
-    HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-
-    Assertions.assertEquals(200, response.statusCode(), response.body());
-    JsonNode artifact = JsonMapper.STRICT_MAPPER.readTree(response.body());
-    Assertions.assertEquals(templateId, artifact.path("@id").asText());
-    Assertions.assertEquals("OpenView readable template", artifact.path("schema:name").asText());
-    Assertions.assertTrue(artifact.path("_id").isMissingNode(), response.body());
   }
 
   @Test

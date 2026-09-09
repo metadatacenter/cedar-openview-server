@@ -434,7 +434,7 @@
     },
     "/template-elements/{id}" : {
       "get" : {
-        "description" : "Return a template element that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "description" : "Return a template element that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Artifact storage's internal `_id` is removed before the artifact is returned.",
         "operationId" : "findTemplateElement",
         "parameters" : [ {
           "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
@@ -484,7 +484,7 @@
                 }
               }
             },
-            "description" : "The artifact store could not be reached after the template element was found to be open"
+            "description" : "A required backend is unavailable"
           }
         },
         "summary" : "Get an open template element",
@@ -493,7 +493,7 @@
     },
     "/template-fields/{id}" : {
       "get" : {
-        "description" : "Return a template field that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "description" : "Return a template field that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Artifact storage's internal `_id` is removed before the artifact is returned.",
         "operationId" : "findTemplateField",
         "parameters" : [ {
           "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
@@ -543,7 +543,7 @@
                 }
               }
             },
-            "description" : "The artifact store could not be reached after the template field was found to be open"
+            "description" : "A required backend is unavailable"
           }
         },
         "summary" : "Get an open template field",
@@ -552,7 +552,7 @@
     },
     "/template-instances/{id}" : {
       "get" : {
-        "description" : "Return a template instance that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "description" : "Return a template instance that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Artifact storage's internal `_id` is removed before the artifact is returned.",
         "operationId" : "findTemplateInstance",
         "parameters" : [ {
           "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
@@ -602,7 +602,7 @@
                 }
               }
             },
-            "description" : "The artifact store could not be reached after the template instance was found to be open"
+            "description" : "A required backend is unavailable"
           }
         },
         "summary" : "Get an open template instance",
@@ -611,7 +611,7 @@
     },
     "/templates/{id}" : {
       "get" : {
-        "description" : "Return a template that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Mongo's internal `_id` is removed before the artifact is returned.",
+        "description" : "Return a template that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. Artifact storage's internal `_id` is removed before the artifact is returned.",
         "operationId" : "findTemplate",
         "parameters" : [ {
           "description" : "Artifact identifier. Either the bare identifier or the full IRI is accepted; a bare one is resolved to the IRI before lookup.",
@@ -661,7 +661,7 @@
                 }
               }
             },
-            "description" : "The artifact store could not be reached after the template was found to be open"
+            "description" : "A required backend is unavailable"
           }
         },
         "summary" : "Get an open template",
