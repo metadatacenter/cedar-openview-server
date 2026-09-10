@@ -88,7 +88,7 @@ public class FoldersResource extends AbstractOpenViewResource {
       return CedarResponse.notFound()
           .id(id)
           .errorKey(CedarErrorKey.FOLDER_NOT_FOUND)
-          .errorMessage("The folder can not be found by id:" + id)
+          .message("The folder can not be found by id:" + id)
           .build();
     } else {
       List<FolderServerResourceExtract> pathInfo = folderSession.findNodePathExtract(folder);
