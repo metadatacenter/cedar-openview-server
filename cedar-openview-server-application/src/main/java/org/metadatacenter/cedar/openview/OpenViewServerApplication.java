@@ -1,18 +1,15 @@
 package org.metadatacenter.cedar.openview;
 
-import com.mongodb.client.MongoClient;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.openview.resources.*;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceIndexResource;
-import org.metadatacenter.cedar.util.dw.CedarMicroserviceApplicationWithMongo;
+import org.metadatacenter.cedar.util.dw.CedarMicroserviceApplication;
 import org.metadatacenter.config.CedarConfig;
-import org.metadatacenter.config.MongoConfig;
 import org.metadatacenter.model.ServerName;
 import org.metadatacenter.server.cache.user.UserSummaryCache;
 
-public class OpenViewServerApplication extends CedarMicroserviceApplicationWithMongo<OpenViewServerConfiguration> {
+public class OpenViewServerApplication extends CedarMicroserviceApplication<OpenViewServerConfiguration> {
 
   public static void main(String[] args) throws Exception {
     new OpenViewServerApplication().run(args);
@@ -31,12 +28,6 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
   public void initializeApp() {
     UserSummaryCache.init(cedarConfig, userService);
 
-    MongoConfig artifactServerConfig = cedarConfig.getArtifactServerConfig();
-    CedarDataServices.initializeMongoClientFactoryForDocuments(artifactServerConfig.getMongoConnection());
-
-    MongoClient mongoClientForDocuments = CedarDataServices.getInstance().getMongoClientFactoryForDocuments().getClient();
-
-    initMongoServices(mongoClientForDocuments, artifactServerConfig);
   }
 
   @Override
@@ -46,16 +37,16 @@ public class OpenViewServerApplication extends CedarMicroserviceApplicationWithM
         new CedarMicroserviceIndexResource(cedarConfig, getServerName());
     environment.jersey().register(index);
 
-    final TemplateFieldsResource fields = new TemplateFieldsResource(cedarConfig, templateFieldService);
+    final TemplateFieldsResource fields = new TemplateFieldsResource(cedarConfig);
     environment.jersey().register(fields);
 
-    final TemplateElementsResource elements = new TemplateElementsResource(cedarConfig, templateElementService);
+    final TemplateElementsResource elements = new TemplateElementsResource(cedarConfig);
     environment.jersey().register(elements);
 
-    final TemplatesResource templates = new TemplatesResource(cedarConfig, templateService);
+    final TemplatesResource templates = new TemplatesResource(cedarConfig);
     environment.jersey().register(templates);
 
-    final TemplateInstancesResource instances = new TemplateInstancesResource(cedarConfig, templateInstanceService);
+    final TemplateInstancesResource instances = new TemplateInstancesResource(cedarConfig);
     environment.jersey().register(instances);
 
     final FoldersResource folders = new FoldersResource(cedarConfig);
