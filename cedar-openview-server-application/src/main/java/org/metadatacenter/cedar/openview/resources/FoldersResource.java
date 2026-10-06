@@ -77,6 +77,7 @@ public class FoldersResource extends AbstractOpenViewResource {
       @QueryParam(QP_LIMIT) Optional<Integer> limitParam,
       @Parameter(description = "Number of entries to skip before the first one returned.")
       @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
+    id = linkedDataUtil.resolveResourceId(org.metadatacenter.model.CedarResourceType.FOLDER, id);
 
     CedarRequestContext c = buildAnonymousRequestContext();
     FolderServiceSession folderSession = dataServices.getFolderServiceSession(c);

@@ -60,7 +60,7 @@ class OpenViewProxyTest {
         assertEquals(BODY, response.body());
         assertEquals("no-store", response.headers().firstValue("Cache-Control").orElse(""));
         assertEquals(before + 1, paths.size());
-        assertEquals("/open" + path, paths.get(before));
+        assertEquals("/open/" + type + "/11111111-2222-3333-4444-555555555555", paths.get(before));
         assertTrue(headers.get(before).keySet().stream().noneMatch(name ->
             name.equalsIgnoreCase("Authorization") || name.equalsIgnoreCase("Cookie")
                 || name.equalsIgnoreCase("X-CEDAR-Artifact-Service-Key")));
