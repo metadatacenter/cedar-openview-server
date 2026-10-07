@@ -29,6 +29,8 @@ class OpenViewProxyTest {
         headers.add(new HashMap<>(exchange.getRequestHeaders()));
         byte[] body = BODY.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.getResponseHeaders().set("Retry-After", "17");
+        exchange.getResponseHeaders().set("Cache-Control", "public, max-age=86400");
         if (status.get() == 302) exchange.getResponseHeaders().set("Location", "/must-not-follow");
         exchange.sendResponseHeaders(status.get(), body.length);
         exchange.getResponseBody().write(body);
@@ -69,12 +71,14 @@ class OpenViewProxyTest {
   }
 
   @Test void forwardsDenialMissingAndUnavailableResponsesWithoutFallbackOrRetry() throws Exception {
-    for (int code : List.of(401, 404, 503, 302)) {
+    for (int code : List.of(401, 404, 405, 429, 503, 504, 302)) {
       status.set(code);
       int before = paths.size();
       var response = get("/templates/missing", false);
       assertEquals(code, response.statusCode(), response.body());
       assertEquals(BODY, response.body());
+      assertEquals("17", response.headers().firstValue("Retry-After").orElseThrow());
+      assertEquals(List.of("no-store"), response.headers().allValues("Cache-Control"));
       assertEquals(before + 1, paths.size(), "Do not retry responses or follow redirects");
     }
   }

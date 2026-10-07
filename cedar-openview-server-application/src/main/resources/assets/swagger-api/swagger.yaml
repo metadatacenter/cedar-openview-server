@@ -17,7 +17,7 @@ info:
     An artifact or folder is served when it is open itself, or when a folder above it is. Anything
     else is refused, and nothing here writes.
   title: CEDAR OpenView Server API
-  version: 2.9.22
+  version: 2.9.23
 paths:
   /:
     get:
@@ -635,6 +635,8 @@ components:
           - dataCiteDOIDisabled
           - pinnedVersionUnavailable
           - resourceNotFound
+          - rateLimitExceeded
+          - rateLimitUnavailable
           - internalError
           nullable: true
         errorReasonKey:
@@ -682,24 +684,9 @@ components:
           description: Named scalar values associated with the error.
         status:
           type: string
-          description: Symbolic HTTP response status.
-          enum:
-          - BAD_REQUEST
-          - UNAUTHORIZED
-          - FORBIDDEN
-          - NOT_FOUND
-          - METHOD_NOT_ALLOWED
-          - NOT_ACCEPTABLE
-          - CONFLICT
-          - PRECONDITION_FAILED
-          - UNSUPPORTED_MEDIA_TYPE
-          - UNPROCESSABLE_ENTITY
-          - PRECONDITION_REQUIRED
-          - INTERNAL_SERVER_ERROR
-          - NOT_IMPLEMENTED
-          - BAD_GATEWAY
-          - SERVICE_UNAVAILABLE
-          - HTTP_VERSION_NOT_SUPPORTED
+          description: "Symbolic HTTP response status, or HTTP_<code> for an unnamed\
+            \ status."
+          pattern: "^[A-Z][A-Z0-9_]*$"
         statusCode:
           type: integer
           format: int32

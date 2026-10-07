@@ -5,7 +5,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
 import org.metadatacenter.config.CedarConfig;
@@ -13,6 +12,7 @@ import org.metadatacenter.exception.CedarDependencyUnavailableException;
 import org.metadatacenter.exception.CedarException;
 import org.metadatacenter.model.CedarResourceType;
 import org.metadatacenter.util.http.HttpTimeouts;
+import org.metadatacenter.util.http.ResponseRelay;
 
 import java.io.IOException;
 
@@ -33,10 +33,8 @@ public abstract class AbstractOpenViewResource extends CedarMicroserviceResource
     Request request = Request.get(url).setHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
         .setHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
     try (ClassicHttpResponse upstream = HttpTimeouts.ANONYMOUS_INTERACTIVE.execute(request)) {
-      Response.ResponseBuilder result = Response.status(upstream.getCode()).type(MediaType.APPLICATION_JSON)
-          .header(HttpHeaders.CACHE_CONTROL, "no-store");
-      if (upstream.getEntity() != null) result.entity(EntityUtils.toByteArray(upstream.getEntity()));
-      return result.build();
+      return ResponseRelay.responseBuilder(upstream).type(MediaType.APPLICATION_JSON)
+          .header(HttpHeaders.CACHE_CONTROL, null).header(HttpHeaders.CACHE_CONTROL, "no-store").build();
     } catch (IOException e) {
       throw new CedarDependencyUnavailableException("Downstream service is unavailable", e);
     }
