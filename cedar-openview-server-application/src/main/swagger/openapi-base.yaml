@@ -26,9 +26,10 @@ components:
     OpenViewResourceSummary:
       type: object
       description: |
-        The complete public summary of one direct child of an open folder. OpenView intentionally
-        excludes ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other
-        stored graph properties.
+        The complete public summary of one direct child of an open folder. A field, element or
+        template also states its version and publication status, as its own document does.
+        OpenView intentionally excludes ACLs, caller-specific permissions, provenance, timestamps,
+        DOI data, and all other stored graph properties.
       required:
         - '@id'
         - resourceType
@@ -43,6 +44,13 @@ components:
         'schema:name':
           type: string
           nullable: true
+        'pav:version':
+          type: string
+          description: The version of a field, element or template; absent for folders and instances.
+        'bibo:status':
+          type: string
+          enum: ['bibo:draft', 'bibo:published']
+          description: The publication status of a field, element or template; absent for folders and instances.
       additionalProperties: false
     OpenViewPathSegment:
       type: object

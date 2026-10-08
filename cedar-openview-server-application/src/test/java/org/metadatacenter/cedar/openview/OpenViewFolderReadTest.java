@@ -51,6 +51,7 @@ class OpenViewFolderReadTest {
 
   private static final HttpClient CLIENT = HttpClient.newHttpClient();
   private static String templateId;
+  private static String openAncestorId;
   private static String inheritedOpenFolderId;
   private static String inheritedOpenTemplateId;
   private static String closedFolderId;
@@ -83,6 +84,7 @@ class OpenViewFolderReadTest {
     FolderServerFolder openAncestor = createFolder(cedarConfig, folderSession, homeFolderId,
         "OpenView public ancestor");
     Assertions.assertTrue(folderSession.setOpen(openAncestor.getResourceId()));
+    openAncestorId = openAncestor.getId();
     FolderServerFolder inheritedOpenFolder = createFolder(cedarConfig, folderSession,
         openAncestor.getResourceId(), "OpenView inherited public child");
     inheritedOpenFolderId = inheritedOpenFolder.getId();
@@ -124,7 +126,10 @@ class OpenViewFolderReadTest {
     Assertions.assertEquals("template", resource.path("resourceType").asText(), response.body());
     Assertions.assertEquals("OpenView inherited public template", resource.path("schema:name").asText(),
         response.body());
-    Assertions.assertEquals(Set.of("@id", "resourceType", "schema:name"), fieldNames(resource), response.body());
+    Assertions.assertEquals("1.0.0", resource.path("pav:version").asText(), response.body());
+    Assertions.assertEquals("bibo:draft", resource.path("bibo:status").asText(), response.body());
+    Assertions.assertEquals(Set.of("@id", "resourceType", "schema:name", "pav:version", "bibo:status"),
+        fieldNames(resource), response.body());
 
     Assertions.assertTrue(body.path("pathInfo").isArray(), response.body());
     Assertions.assertTrue(body.path("pathInfo").size() > 1, response.body());
@@ -137,6 +142,16 @@ class OpenViewFolderReadTest {
     Assertions.assertFalse(response.body().contains("currentUserPermissions"), response.body());
     Assertions.assertFalse(response.body().contains("ownedBy"), response.body());
     Assertions.assertFalse(response.body().contains("This private graph field"), response.body());
+  }
+
+  @Test
+  void aFolderSummaryCarriesNoVersion() throws Exception {
+    HttpResponse<String> response = getFolder(openAncestorId);
+
+    Assertions.assertEquals(200, response.statusCode(), response.body());
+    JsonNode resource = JsonMapper.STRICT_MAPPER.readTree(response.body()).path("resources").path(0);
+    Assertions.assertEquals(inheritedOpenFolderId, resource.path("@id").asText(), response.body());
+    Assertions.assertEquals(Set.of("@id", "resourceType", "schema:name"), fieldNames(resource), response.body());
   }
 
   @Test
