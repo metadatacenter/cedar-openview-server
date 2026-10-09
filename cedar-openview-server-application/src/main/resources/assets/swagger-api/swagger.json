@@ -3,7 +3,7 @@
   "info" : {
     "description" : "Better Metadata - Better Science\n\nFolders and artifacts use type-qualified selectors: `folders/<uuid>`, `templates/<uuid>`,\n`template-elements/<uuid>`, `template-fields/<uuid>`, or `template-instances/<uuid>`.\nTyped routes include the type once, for example `/templates/<uuid>`. Query parameters and\ncommand-body selectors retain the type, including folder parameters. Percent-encoded full\nIRIs remain accepted for compatibility. Stored document identities and references remain\nfull IRIs; legacy repository hosts must remain absolute until their data is migrated.\n\nThe OpenView server hands out CEDAR content that has been marked open, to anyone, without\ncredentials. It is what makes a published artifact citable: the artifact IRI resolves here for a\nreader who has no CEDAR account.\n\nAn artifact or folder is served when it is open itself, or when a folder above it is. Anything\nelse is refused, and nothing here writes.\n",
     "title" : "CEDAR OpenView Server API",
-    "version" : "2.9.23"
+    "version" : "2.9.24"
   },
   "paths" : {
     "/" : {
@@ -27,7 +27,7 @@
     },
     "/folders/{id}" : {
       "get" : {
-        "description" : "Return an anonymous public projection of what an open folder holds. Opening a folder makes its whole descendant subtree readable through OpenView. The breadcrumb contains ancestor names only; child summaries contain only their identifier, type, and name. No ACL, provenance, timestamp, DOI, or caller-specific permission fields are returned.",
+        "description" : "Return an anonymous public projection of what an open folder holds. Opening a folder makes its whole descendant subtree readable through OpenView. The breadcrumb contains ancestor names only; child summaries contain only their identifier, type, and name, and for a field, element or template its version and publication status. No ACL, provenance, timestamp, DOI, or caller-specific permission fields are returned.",
         "operationId" : "findFolder",
         "parameters" : [ {
           "description" : "Folder identifier.",
@@ -928,11 +928,20 @@
       "OpenViewResourceSummary" : {
         "type" : "object",
         "additionalProperties" : false,
-        "description" : "The complete public summary of one direct child of an open folder. OpenView intentionally\nexcludes ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other\nstored graph properties.\n",
+        "description" : "The complete public summary of one direct child of an open folder. A field, element or\ntemplate also states its version and publication status, as its own document does.\nOpenView intentionally excludes ACLs, caller-specific permissions, provenance, timestamps,\nDOI data, and all other stored graph properties.\n",
         "properties" : {
           "@id" : {
             "type" : "string",
             "format" : "uri"
+          },
+          "bibo:status" : {
+            "type" : "string",
+            "description" : "The publication status of a field, element or template; absent for folders and instances.",
+            "enum" : [ "bibo:draft", "bibo:published" ]
+          },
+          "pav:version" : {
+            "type" : "string",
+            "description" : "The version of a field, element or template; absent for folders and instances."
           },
           "resourceType" : {
             "type" : "string",

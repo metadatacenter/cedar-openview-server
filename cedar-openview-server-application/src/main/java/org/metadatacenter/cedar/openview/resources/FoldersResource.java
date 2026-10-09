@@ -53,7 +53,7 @@ public class FoldersResource extends AbstractOpenViewResource {
       description = "Return an anonymous public projection of what an open folder holds. Opening a "
           + "folder makes its whole descendant subtree readable through OpenView. The breadcrumb "
           + "contains ancestor names only; child summaries contain only their identifier, type, and "
-          + "name. No ACL, provenance, timestamp, DOI, or caller-specific permission fields are returned.")
+          + "name, and for a field, element or template its version and publication status. No ACL, provenance, timestamp, DOI, or caller-specific permission fields are returned.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "The folder's contents and its path",
           content = @Content(schema = @Schema(ref = "#/components/schemas/OpenViewFolderResponse"))),

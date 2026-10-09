@@ -17,7 +17,7 @@ info:
     An artifact or folder is served when it is open itself, or when a folder above it is. Anything
     else is refused, and nothing here writes.
   title: CEDAR OpenView Server API
-  version: 2.9.23
+  version: 2.9.24
 paths:
   /:
     get:
@@ -37,8 +37,9 @@ paths:
       description: "Return an anonymous public projection of what an open folder holds.\
         \ Opening a folder makes its whole descendant subtree readable through OpenView.\
         \ The breadcrumb contains ancestor names only; child summaries contain only\
-        \ their identifier, type, and name. No ACL, provenance, timestamp, DOI, or\
-        \ caller-specific permission fields are returned."
+        \ their identifier, type, and name, and for a field, element or template its\
+        \ version and publication status. No ACL, provenance, timestamp, DOI, or caller-specific\
+        \ permission fields are returned."
       operationId: findFolder
       parameters:
       - description: Folder identifier.
@@ -853,13 +854,25 @@ components:
       type: object
       additionalProperties: false
       description: |
-        The complete public summary of one direct child of an open folder. OpenView intentionally
-        excludes ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other
-        stored graph properties.
+        The complete public summary of one direct child of an open folder. A field, element or
+        template also states its version and publication status, as its own document does.
+        OpenView intentionally excludes ACLs, caller-specific permissions, provenance, timestamps,
+        DOI data, and all other stored graph properties.
       properties:
         '@id':
           type: string
           format: uri
+        bibo:status:
+          type: string
+          description: "The publication status of a field, element or template; absent\
+            \ for folders and instances."
+          enum:
+          - bibo:draft
+          - bibo:published
+        pav:version:
+          type: string
+          description: "The version of a field, element or template; absent for folders\
+            \ and instances."
         resourceType:
           type: string
           enum:
