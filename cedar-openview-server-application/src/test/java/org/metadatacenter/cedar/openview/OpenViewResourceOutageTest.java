@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("integration")
 class OpenViewResourceOutageTest {
   static {
     EmbeddedCedarNeo4j.startAndRedirectEnvironment(Map.of(

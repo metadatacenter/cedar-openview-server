@@ -6,6 +6,7 @@ import io.dropwizard.testing.ResourceHelpers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.config.CedarConfig;
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 /** Folder projections retain their graph-backed anonymous contract. */
+@Tag("integration")
 class OpenViewFolderReadTest {
 
   static {
