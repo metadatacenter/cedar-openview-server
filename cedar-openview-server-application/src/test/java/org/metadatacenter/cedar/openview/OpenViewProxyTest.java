@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 /** Boots the real OpenView application with no artifact store and a controlled resource HTTP peer. */
+@Tag("integration")
 class OpenViewProxyTest {
   private static HttpServer resource;
   private static final List<String> paths = new ArrayList<>();
