@@ -39,7 +39,7 @@ class OpenViewProxyTest {
       });
       resource.start();
       EmbeddedCedarNeo4j.startAndRedirectEnvironment(Map.of(
-          "CEDAR_OPENVIEW_HTTP_PORT", "0", "CEDAR_OPENVIEW_ADMIN_PORT", "0", "CEDAR_OPENVIEW_STOP_PORT", "0",
+          "CEDAR_OPENVIEW_HTTP_PORT", "0", "CEDAR_OPENVIEW_ADMIN_PORT", "0",
           "CEDAR_RESOURCE_SERVER_HOST", "127.0.0.1",
           "CEDAR_RESOURCE_HTTP_PORT", Integer.toString(resource.getAddress().getPort()),
           "CEDAR_MONGO_PORT", "1", "CEDAR_REDIS_PERSISTENT_PORT", "1"));
