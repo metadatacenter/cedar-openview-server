@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.config.environment.CedarEnvironmentVariableProvider;
+import org.metadatacenter.error.CedarErrorKey;
 import org.metadatacenter.id.CedarArtifactId;
 import org.metadatacenter.id.CedarFolderId;
 import org.metadatacenter.model.CedarResourceType;
@@ -31,8 +32,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /** Folder projections retain their graph-backed anonymous contract. */
 @Tag("integration")
@@ -42,7 +45,6 @@ class OpenViewFolderReadTest {
     EmbeddedCedarNeo4j.startAndRedirectEnvironment(Map.of(
         "CEDAR_OPENVIEW_HTTP_PORT", "0",
         "CEDAR_OPENVIEW_ADMIN_PORT", "0",
-        "CEDAR_OPENVIEW_STOP_PORT", "0",
         "CEDAR_REDIS_PERSISTENT_PORT", "1"));
     EmbeddedCedarNeo4j.startAndRedirectEnvironment();
   }
@@ -156,10 +158,27 @@ class OpenViewFolderReadTest {
     Assertions.assertEquals(Set.of("@id", "resourceType", "schema:name"), fieldNames(resource), response.body());
   }
 
+  /** The refusal names the folder it refuses and nothing in it: no listing, no path, no name. */
   @Test
   void anonymousFolderReadRefusesAClosedTree() throws Exception {
     HttpResponse<String> response = getFolder(closedFolderId);
     Assertions.assertEquals(401, response.statusCode(), response.body());
+    JsonNode body = JsonMapper.STRICT_MAPPER.readTree(response.body());
+    Assertions.assertEquals("UNAUTHORIZED", body.path("status").asText(), response.body());
+    for (String disclosure : List.of("resources", "pathInfo", "totalCount", "nodeListQueryType")) {
+      Assertions.assertFalse(body.has(disclosure), disclosure + " in " + response.body());
+    }
+    Assertions.assertFalse(response.body().contains("OpenView closed folder"), response.body());
+    Assertions.assertFalse(response.body().contains("Private fixture description"), response.body());
+  }
+
+  @Test
+  void aMissingFolderIsNotFound() throws Exception {
+    String missing = "https://repo.metadatacenter.orgx/folders/" + UUID.randomUUID();
+    HttpResponse<String> response = getFolder(missing);
+    Assertions.assertEquals(404, response.statusCode(), response.body());
+    Assertions.assertEquals(CedarErrorKey.FOLDER_NOT_FOUND.getValue(),
+        JsonMapper.STRICT_MAPPER.readTree(response.body()).path("errorKey").asText(), response.body());
   }
 
   private static FolderServerFolder createFolder(CedarConfig cedarConfig, FolderServiceSession folderSession,
