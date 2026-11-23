@@ -70,7 +70,7 @@ paths:
         name: sort
         schema:
           type: string
-      - description: Maximum number of entries to return.
+      - description: "How many entries to return, from 1 to 500. Defaults to 100."
         in: query
         name: limit
         schema:

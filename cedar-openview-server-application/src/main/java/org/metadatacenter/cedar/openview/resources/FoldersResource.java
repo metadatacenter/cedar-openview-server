@@ -73,7 +73,7 @@ public class FoldersResource extends AbstractOpenViewResource {
       @QueryParam(QP_PUBLICATION_STATUS) Optional<String> publicationStatusParam,
       @Parameter(description = "Comma-separated sort fields; a leading `-` reverses one.")
       @QueryParam(QP_SORT) Optional<String> sortParam,
-      @Parameter(description = "Maximum number of entries to return.")
+      @Parameter(description = "How many entries to return, from 1 to 500. Defaults to 100.")
       @QueryParam(QP_LIMIT) Optional<Integer> limitParam,
       @Parameter(description = "Number of entries to skip before the first one returned.")
       @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
