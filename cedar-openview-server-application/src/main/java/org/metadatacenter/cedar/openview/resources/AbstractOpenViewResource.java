@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.Response;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.metadatacenter.bridge.CedarDataServices;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceResource;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.exception.CedarDependencyUnavailableException;
@@ -30,10 +29,6 @@ import java.util.StringJoiner;
 public abstract class AbstractOpenViewResource extends CedarMicroserviceResource {
   public AbstractOpenViewResource(CedarConfig config) {
     super(config);
-  }
-
-  public AbstractOpenViewResource(CedarConfig config, CedarDataServices dataServices) {
-    super(config, dataServices);
   }
 
   protected Response resolveArtifact(String id, CedarResourceType type) throws CedarException {

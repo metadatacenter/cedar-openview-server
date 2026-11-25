@@ -7,7 +7,6 @@ import org.metadatacenter.cedar.util.dw.CedarMicroserviceIndexResource;
 import org.metadatacenter.cedar.util.dw.CedarMicroserviceApplication;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.model.ServerName;
-import org.metadatacenter.server.cache.user.UserSummaryCache;
 
 public class OpenViewServerApplication extends CedarMicroserviceApplication<OpenViewServerConfiguration> {
 
@@ -26,8 +25,6 @@ public class OpenViewServerApplication extends CedarMicroserviceApplication<Open
 
   @Override
   public void initializeApp() {
-    UserSummaryCache.init(cedarConfig, userService);
-
   }
 
   @Override
