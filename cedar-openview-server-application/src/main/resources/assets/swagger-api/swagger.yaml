@@ -10,9 +10,10 @@ info:
     IRIs remain accepted for compatibility. Stored document identities and references remain
     full IRIs; legacy repository hosts must remain absolute until their data is migrated.
 
-    The OpenView server hands out CEDAR content that has been marked open, to anyone, without
-    credentials. It is what makes a published artifact citable: the artifact IRI resolves here for a
-    reader who has no CEDAR account.
+    The OpenView server keeps published OpenView links resolving for a reader who has no CEDAR
+    account. It decides nothing itself: every route relays the resource server's anonymous `/open`
+    route for the same artifact or folder, forwards no credential, and answers with what that route
+    answered. A folder listing's paging links are rewritten to point back at OpenView.
 
     An artifact or folder is served when it is open itself, or when a folder above it is. Anything
     else is refused, and nothing here writes.
@@ -35,14 +36,19 @@ paths:
   /folders/{id}:
     get:
       description: "Return an anonymous public projection of what an open folder holds.\
-        \ Opening a folder makes its whole descendant subtree readable through OpenView.\
+        \ A folder is listed when it is open itself or when a folder above it is,\
+        \ so opening a folder makes its whole descendant subtree readable. The resource\
+        \ server decides openness and builds the listing on its `/open/folders` route;\
+        \ this route relays that answer under OpenView's URL, with its paging links\
+        \ pointing back here. No credentials are involved, and none are forwarded.\
         \ The breadcrumb contains ancestor names only; child summaries contain only\
         \ their identifier, type, and name, and for a field, element or template its\
         \ version and publication status. No ACL, provenance, timestamp, DOI, or caller-specific\
         \ permission fields are returned."
       operationId: findFolder
       parameters:
-      - description: Folder identifier.
+      - description: Folder identifier. Either the bare identifier or the full IRI
+          is accepted.
         in: path
         name: id
         required: true
@@ -108,6 +114,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/CedarError"
           description: No such folder
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CedarError"
+          description: A required backend is unavailable
       summary: List the contents of an open folder
       tags:
       - Folders
@@ -310,9 +322,11 @@ paths:
     get:
       description: "Return a template element that is open to everyone. An artifact\
         \ is served when it is marked open, or when it sits under a folder that is.\
-        \ No credentials are involved: this server exists to hand out open artifacts\
-        \ anonymously, which is what makes a published CEDAR artifact citable. Artifact\
-        \ storage's internal `_id` is removed before the artifact is returned."
+        \ No credentials are involved, and none are forwarded. The resource server\
+        \ decides openness and serves the artifact from its `/open` route; this route\
+        \ relays that answer under OpenView's URL, so that a published OpenView link\
+        \ keeps resolving. Artifact storage's internal `_id` is removed before the\
+        \ artifact is returned."
       operationId: findTemplateElement
       parameters:
       - description: Artifact identifier. Either the bare identifier or the full IRI
@@ -355,9 +369,11 @@ paths:
     get:
       description: "Return a template field that is open to everyone. An artifact\
         \ is served when it is marked open, or when it sits under a folder that is.\
-        \ No credentials are involved: this server exists to hand out open artifacts\
-        \ anonymously, which is what makes a published CEDAR artifact citable. Artifact\
-        \ storage's internal `_id` is removed before the artifact is returned."
+        \ No credentials are involved, and none are forwarded. The resource server\
+        \ decides openness and serves the artifact from its `/open` route; this route\
+        \ relays that answer under OpenView's URL, so that a published OpenView link\
+        \ keeps resolving. Artifact storage's internal `_id` is removed before the\
+        \ artifact is returned."
       operationId: findTemplateField
       parameters:
       - description: Artifact identifier. Either the bare identifier or the full IRI
@@ -400,9 +416,11 @@ paths:
     get:
       description: "Return a template instance that is open to everyone. An artifact\
         \ is served when it is marked open, or when it sits under a folder that is.\
-        \ No credentials are involved: this server exists to hand out open artifacts\
-        \ anonymously, which is what makes a published CEDAR artifact citable. Artifact\
-        \ storage's internal `_id` is removed before the artifact is returned."
+        \ No credentials are involved, and none are forwarded. The resource server\
+        \ decides openness and serves the artifact from its `/open` route; this route\
+        \ relays that answer under OpenView's URL, so that a published OpenView link\
+        \ keeps resolving. Artifact storage's internal `_id` is removed before the\
+        \ artifact is returned."
       operationId: findTemplateInstance
       parameters:
       - description: Artifact identifier. Either the bare identifier or the full IRI
@@ -445,9 +463,10 @@ paths:
     get:
       description: "Return a template that is open to everyone. An artifact is served\
         \ when it is marked open, or when it sits under a folder that is. No credentials\
-        \ are involved: this server exists to hand out open artifacts anonymously,\
-        \ which is what makes a published CEDAR artifact citable. Artifact storage's\
-        \ internal `_id` is removed before the artifact is returned."
+        \ are involved, and none are forwarded. The resource server decides openness\
+        \ and serves the artifact from its `/open` route; this route relays that answer\
+        \ under OpenView's URL, so that a published OpenView link keeps resolving.\
+        \ Artifact storage's internal `_id` is removed before the artifact is returned."
       operationId: findTemplate
       parameters:
       - description: Artifact identifier. Either the bare identifier or the full IRI
@@ -800,8 +819,9 @@ components:
       additionalProperties: false
       description: |
         One page of an anonymously readable folder. Opening a folder makes the full subtree below
-        it public through OpenView. The response is caller-independent and contains only public
-        child summaries, ancestor names, and normalized paging metadata.
+        it public. The response is caller-independent and contains only public child summaries,
+        ancestor names, and normalized paging metadata. It is the resource server's
+        OpenFolderResponse, relayed, with its paging links pointing at OpenView.
       properties:
         '@context':
           type: object
@@ -856,8 +876,9 @@ components:
       description: |
         The complete public summary of one direct child of an open folder. A field, element or
         template also states its version and publication status, as its own document does.
-        OpenView intentionally excludes ACLs, caller-specific permissions, provenance, timestamps,
-        DOI data, and all other stored graph properties.
+        ACLs, caller-specific permissions, provenance, timestamps, DOI data, and all other stored
+        graph properties are intentionally excluded. This is the resource server's
+        OpenResourceSummary, relayed.
       properties:
         '@id':
           type: string

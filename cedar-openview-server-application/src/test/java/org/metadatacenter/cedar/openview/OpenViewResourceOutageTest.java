@@ -25,9 +25,11 @@ class OpenViewResourceOutageTest {
   @BeforeAll static void start() throws Exception { SERVER.before(); }
   @AfterAll static void stop() { SERVER.after(); }
 
+  /** Folders included: a listing is the resource server's to give, and the graph is never read here. */
   @Test void resourceOutageIsSanitizedAndNeverFallsBackToMongo() throws Exception {
     var client = HttpClient.newHttpClient();
-    for (String type : List.of("templates", "template-elements", "template-fields", "template-instances")) {
+    for (String type : List.of("templates", "template-elements", "template-fields", "template-instances",
+        "folders")) {
       var response = client.send(HttpRequest.newBuilder(URI.create("http://localhost:" + SERVER.getLocalPort()
           + "/" + type + "/11111111-2222-3333-4444-555555555555")).GET().build(),
           HttpResponse.BodyHandlers.ofString());

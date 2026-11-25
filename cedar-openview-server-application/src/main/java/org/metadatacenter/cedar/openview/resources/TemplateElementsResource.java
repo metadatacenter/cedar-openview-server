@@ -36,7 +36,7 @@ public class TemplateElementsResource extends AbstractOpenViewResource {
   @Timed
   @Path("/{id}")
   @Operation(summary = "Get an open template element",
-      description = "Return a template element that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved: this server exists to hand out open artifacts anonymously, which is what makes a published CEDAR artifact citable. "
+      description = "Return a template element that is open to everyone. An artifact is served when it is marked open, or when it sits under a folder that is. No credentials are involved, and none are forwarded. The resource server decides openness and serves the artifact from its `/open` route; this route relays that answer under OpenView's URL, so that a published OpenView link keeps resolving. "
           + "Artifact storage's internal `_id` is removed before the artifact is returned.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "The template element",
