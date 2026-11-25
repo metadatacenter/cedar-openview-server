@@ -76,7 +76,7 @@ class OpenViewFolderProxyTest {
       String path = "/folders/" + URLEncoder.encode(id, StandardCharsets.UTF_8);
       int before = requests.size();
       var response = get(path + "?resource_types=template&sort=name&limit=1&offset=1"
-          + "&url=http://untrusted.example/&q=secret&page=2", true);
+          + "&url=http://untrusted.example/&q=secret", true);
       assertEquals(200, response.statusCode(), response.body());
       assertEquals(List.of("no-store"), response.headers().allValues("Cache-Control"));
       assertEquals(before + 1, requests.size());
@@ -142,6 +142,17 @@ class OpenViewFolderProxyTest {
     assertEquals(own, paging.path("first").asText());
     assertEquals(own, paging.path("last").asText());
     assertEquals(7, paging.path("count").asInt());
+  }
+
+  @Test void refusesPagingByPageNumberBeforeRelaying() throws Exception {
+    status.set(200);
+    for (String name : List.of("page", "pageSize", "page_size")) {
+      int before = requests.size();
+      var response = get("/folders/" + FOLDER_UUID + "?" + name + "=2", false);
+      assertEquals(400, response.statusCode(), response.body());
+      assertTrue(response.body().contains(name), response.body());
+      assertEquals(before, requests.size(), "A refused listing is never relayed");
+    }
   }
 
   private static HttpResponse<String> get(String path, boolean credentials) throws Exception {

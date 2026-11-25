@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.metadatacenter.config.CedarConfig;
 import org.metadatacenter.exception.CedarException;
 import org.metadatacenter.util.http.CedarError;
+import org.metadatacenter.util.http.PagedQuery;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -68,6 +69,9 @@ public class FoldersResource extends AbstractOpenViewResource {
       @QueryParam(QP_LIMIT) Optional<Integer> limitParam,
       @Parameter(description = "Number of entries to skip before the first one returned.")
       @QueryParam(QP_OFFSET) Optional<Integer> offsetParam) throws CedarException {
+    PagedQuery.refusePageNumbers(uriInfo.getQueryParameters(), PagedQuery.pageNumbersWithdrawn(
+        cedarConfig.getResourceRESTAPI().getPagination().getDefaultPageSize(),
+        cedarConfig.getResourceRESTAPI().getPagination().getMaxPageSize()));
     // Only the parameters this route declares are forwarded, and only as values it has already bound.
     Map<String, String> query = new LinkedHashMap<>();
     resourceTypes.ifPresent(v -> query.put(QP_RESOURCE_TYPES, v));
